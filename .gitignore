@@ -22,4 +22,5 @@ dist
 
 # vuepress build output
 .vuepress/dist
+.temp
 

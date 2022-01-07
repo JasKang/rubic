@@ -17,16 +17,7 @@ export type ComponentOptions<
   behaviors?: []
   externalClasses?: string[]
   relations?: {}
-  options?: {
-    virtualHost?: boolean
-    styleIsolation?:
-      | 'isolated'
-      | 'apply-shared'
-      | 'shared'
-      | 'page-isolated'
-      | 'page-apply-shared'
-      | 'page-shared'
-  }
+  options?: WechatMiniprogram.Component.ComponentOptions
 }
 
 function wrapHooks<T extends readonly string[]>(
