@@ -11,11 +11,11 @@ export {
   ComputedRef,
   Ref,
 } from '@vue/reactivity'
-export { createApp } from './app'
-export { defineComponent, definePage } from './component'
-export { getCurrentInstance } from './core'
-export { nextRender } from './bindings'
-export { watch, watchEffect } from './watch'
+export { createApp } from './core/app'
+export { defineComponent, definePage } from './core/component'
+export { getCurrentInstance } from './core/instance'
+export { nextRender } from './core/bindings'
+export { watch, watchEffect } from './core/watch'
 
 export {
   onReady,
@@ -33,4 +33,4 @@ export {
   onShareAppMessage,
   onShareTimeline,
   onAddToFavorites,
-} from './apiLifetime'
+} from './core/apiLifetime'

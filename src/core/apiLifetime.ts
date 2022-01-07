@@ -1,6 +1,6 @@
 import type { HookType } from './constants'
 import { PAGE_ON_METHODS, CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES } from './constants'
-import { getCurrentInstance } from './core'
+import { getCurrentInstance } from './instance'
 import { error } from './errorHandling'
 import type { Func } from './types'
 import { firstToUpper } from './util'

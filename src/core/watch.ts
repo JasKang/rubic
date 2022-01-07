@@ -13,7 +13,7 @@ import {
   hasChanged,
   remove,
 } from './util'
-import { getCurrentInstance } from './core'
+import { getCurrentInstance } from './instance'
 import {
   callWithErrorHandling,
   callWithAsyncErrorHandling,

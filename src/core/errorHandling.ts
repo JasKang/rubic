@@ -1,6 +1,6 @@
 import { pauseTracking, resetTracking } from '@vue/reactivity'
 import { isPromise, isFunction } from './util'
-import type { Instance } from './core'
+import type { Instance } from './instance'
 import type { Func } from './types'
 
 export const enum ErrorTypes {
