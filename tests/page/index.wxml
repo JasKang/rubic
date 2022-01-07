@@ -1,0 +1,1 @@
+<view id="text" bind:tap="tap">data: {{text}}</view>

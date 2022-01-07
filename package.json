@@ -1,0 +1,53 @@
+{
+  "name": "jweapp",
+  "version": "0.0.2-beta.2",
+  "description": "jweapp",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "miniprogram": "dist",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "author": "jaskang",
+  "license": "MIT",
+  "homepage": "https://github.com/JasKang/jweapp#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JasKang/jweapp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JasKang/jweapp/issues"
+  },
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "pnpm build",
+    "release:pre": "release-it --preRelease=beta",
+    "release": "release-it",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@release-it/conventional-changelog": "^3.3.0",
+    "@types/jest": "^27.4.0",
+    "@types/node": "^12.20.41",
+    "@types/wechat-miniprogram": "^3.4.0",
+    "@typescript-eslint/eslint-plugin": "^5.9.0",
+    "@typescript-eslint/parser": "^5.9.0",
+    "@vue/reactivity": "^3.2.26",
+    "esbuild": "^0.14.10",
+    "esbuild-jest": "^0.5.0",
+    "eslint": "^8.6.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.4",
+    "jest": "^27.4.7",
+    "miniprogram-simulate": "^1.4.3",
+    "prettier": "^2.5.1",
+    "release-it": "^14.11.8",
+    "tsup": "^5.11.11",
+    "typescript": "^4.5.4"
+  }
+}
