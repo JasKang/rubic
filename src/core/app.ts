@@ -1,1 +1,3 @@
-export function createApp() {}
+export function createApp(options) {
+  return App({})
+}

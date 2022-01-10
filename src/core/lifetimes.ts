@@ -1,9 +1,10 @@
 import type { HookType } from './constants'
 import { PAGE_ON_METHODS, CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES } from './constants'
+import type { ComponentInstance } from './instance'
 import { getCurrentInstance } from './instance'
 import { error } from './errorHandling'
 import type { Func } from './types'
-import { firstToUpper } from './util'
+import { arrayToRecord, firstToUpper } from './util'
 
 type AllHook = HookType['Lifetime'] | HookType['PageLifetime'] | HookType['Method']
 
@@ -15,6 +16,24 @@ function isPageLifetimeType(key: string): key is HookType['PageLifetime'] {
 }
 function isPageMethodType(key: string): key is HookType['Method'] {
   return PAGE_ON_METHODS.indexOf(key as unknown as any) >= 0
+}
+
+export function wrapHooks<T extends readonly string[]>(
+  scope: 'lifetimes' | 'pageLifetimes' | 'methods',
+  funcKeys: T
+): { [key in T[number]]: Func } {
+  const lifeTimes = arrayToRecord<T, Func>(funcKeys, funcKey => {
+    return function (this: ComponentInstance, ...args: unknown[]) {
+      const core = this[CORE_KEY]
+      const hooks = (core.hooks[scope] as any)[funcKey] || []
+      let ret: unknown = undefined
+      hooks.forEach((func: Func) => {
+        ret = func(...args)
+      })
+      return ret
+    }
+  })
+  return lifeTimes
 }
 
 function getLifetimeHooks(lifetime: AllHook) {

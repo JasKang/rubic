@@ -6,6 +6,8 @@ import { CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES, PAGE_ON_METHODS } from '
 import type { Data, Expand, Func } from './types'
 import { arrayToRecord, bindingToRaw } from './util'
 
+export type NextRender = (fn: () => void) => void
+
 export type Core = {
   props: ShallowReactive<Record<string, any>>
   isPage: boolean
@@ -27,15 +29,26 @@ export type Core = {
     keys: string[]
     patchData: () => Promise<void>
   }
-  nextRender(this: Instance, fn: (this: Instance) => void): void
+  nextRender: NextRender
 }
 
-export type PageInstance = Expand<
-  WechatMiniprogram.Component.Instance<Data, {}, { [x: string]: Func }, { [CORE_KEY]: Core }, true>
+export interface CustomPageContext {}
+export interface CustomComponentContext {}
+
+export type PageInstance = WechatMiniprogram.Component.Instance<
+  Data,
+  {},
+  {},
+  { [CORE_KEY]: Core } & CustomPageContext,
+  true
 >
 
-export type ComponentInstance = Expand<
-  WechatMiniprogram.Component.Instance<Data, {}, { [x: string]: Func }, { [CORE_KEY]: Core }, false>
+export type ComponentInstance = WechatMiniprogram.Component.Instance<
+  Data,
+  {},
+  {},
+  { [CORE_KEY]: Core } & CustomComponentContext,
+  false
 >
 
 export type Instance = PageInstance | ComponentInstance

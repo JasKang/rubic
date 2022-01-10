@@ -13,8 +13,7 @@ export {
 } from '@vue/reactivity'
 export { createApp } from './core/app'
 export { defineComponent, definePage } from './core/component'
-export { getCurrentInstance } from './core/instance'
-export { nextRender } from './core/bindings'
+export { getCurrentInstance, CustomPageContext, CustomComponentContext } from './core/instance'
 export { watch, watchEffect } from './core/watch'
 
 export {
