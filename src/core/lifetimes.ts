@@ -17,29 +17,38 @@ function isPageMethodType(key: string): key is HookType['Method'] {
   return PAGE_ON_METHODS.indexOf(key as unknown as any) >= 0
 }
 
-function createHook<T extends Func>(lifetime: AllHook) {
-  return (hook: T): void => {
-    const ins = getCurrentInstance()
-    let key: AllHook = lifetime
-    if (ins) {
-      const isPage = ins[CORE_KEY].isPage
-      const overwriteKey = `on${firstToUpper(key)}`
-      if (isPage && isPageMethodType(overwriteKey)) {
-        key = overwriteKey
-      }
-      if (isLifetimeType(key)) {
-        ins[CORE_KEY].hooks.lifetimes[key].push(hook)
-      } else if (isPageLifetimeType(key)) {
-        ins[CORE_KEY].hooks.pageLifetimes[key].push(hook)
-      } else {
-        if (isPage) {
-          ins[CORE_KEY].hooks.methods[key].push(hook)
-        } else {
-          error(new Error(`当前没有实例 无法创建${key}钩子`))
-        }
-      }
+function getLifetimeHooks(lifetime: AllHook) {
+  const ins = getCurrentInstance()
+  let key: AllHook = lifetime
+  if (ins) {
+    const isPage = ins[CORE_KEY].isPage
+    const overwriteKey = `on${firstToUpper(key)}`
+    if (isPage && isPageMethodType(overwriteKey)) {
+      key = overwriteKey
+    }
+    if (isLifetimeType(key)) {
+      return ins[CORE_KEY].hooks.lifetimes[key]
+    } else if (isPageLifetimeType(key)) {
+      return ins[CORE_KEY].hooks.pageLifetimes[key]
     } else {
-      error(new Error(`当前没有实例 无法创建${key}钩子`))
+      if (isPage) {
+        return ins[CORE_KEY].hooks.methods[key]
+      } else {
+        return `当前实例是组件 无法创建 Page 钩子:${key}.`
+      }
+    }
+  } else {
+    return `当前没有实例 无法创建${key}钩子.`
+  }
+}
+
+function createHook<T extends Func>(lifetime: AllHook, wrapFunc?: (func: T) => ReturnType<T>) {
+  return (hook: T): void => {
+    const hooks = getLifetimeHooks(lifetime)
+    if (Array.isArray(hooks)) {
+      hooks.push(wrapFunc || hook)
+    } else {
+      error(new Error(hooks))
     }
   }
 }
@@ -47,7 +56,7 @@ function createHook<T extends Func>(lifetime: AllHook) {
  * ====== Lifetime  ====
  */
 
-export const onReady = createHook('ready') // Page 公用
+export const onReady = createHook('ready')
 export const onMoved = createHook('moved')
 export const onDetached = createHook('detached')
 export const onError = createHook('error')
@@ -58,19 +67,19 @@ export const onError = createHook('error')
 
 export const onShow = createHook('show')
 export const onHide = createHook('hide')
-export const onResize = createHook('resize') // Page 公用
+export const onResize = createHook('resize')
 
 /**
  * ====== Method  ====
  */
 
 export const onLoad = createHook('onLoad')
-// export const onReady = createHook('onReady')
+// export const onReady = createHook('onReady') // Lifetime 公用
 export const onUnload = createHook('onUnload')
 export const onPullDownRefresh = createHook('onPullDownRefresh')
 export const onReachBottom = createHook('onReachBottom')
 export const onPageScroll = createHook('onPageScroll')
-// export const onResize = createHook('onResize')
+// export const onResize = createHook('onResize') // PageLifetime 公用
 export const onShareAppMessage = createHook('onShareAppMessage')
 export const onShareTimeline = createHook('onShareTimeline')
 export const onAddToFavorites = createHook('onAddToFavorites')

@@ -33,4 +33,4 @@ export {
   onShareAppMessage,
   onShareTimeline,
   onAddToFavorites,
-} from './core/apiLifetime'
+} from './core/lifetimes'

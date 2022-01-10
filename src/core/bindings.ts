@@ -1,6 +1,6 @@
 import { isRef } from '@vue/reactivity'
 import { CORE_KEY } from './constants'
-import type { Instance } from './instance'
+import { Instance } from './instance'
 import { getCurrentInstance } from './instance'
 import { isObject } from './util'
 import { watch } from './watch'
