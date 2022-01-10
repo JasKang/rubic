@@ -1,7 +1,6 @@
 import { isRef } from '@vue/reactivity'
 import { CORE_KEY } from './constants'
-import { Instance } from './instance'
-import { getCurrentInstance } from './instance'
+import type { Instance } from './instance'
 import { isObject } from './util'
 import { watch } from './watch'
 
@@ -36,14 +35,4 @@ export function watchRender(this: Instance) {
       flush: 'post',
     }
   )
-}
-
-export function nextRender<T = void>(this: T, fn: (this: T) => void, ctx: Instance) {
-  const currentCtx = ctx || getCurrentInstance()
-  if (currentCtx) {
-    const { effects } = currentCtx[CORE_KEY].render
-    if (effects.indexOf(fn) === -1) {
-      effects.push(fn)
-    }
-  }
 }

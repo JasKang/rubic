@@ -27,6 +27,7 @@ export type Core = {
     keys: string[]
     patchData: () => Promise<void>
   }
+  nextRender(this: Instance, fn: (this: Instance) => void): void
 }
 
 export type PageInstance = Expand<
@@ -86,6 +87,12 @@ export function createCore(isPage: boolean): Core {
           }
         })
       },
+    },
+    nextRender(this: Instance, fn: (this: Instance) => void) {
+      const { effects } = this[CORE_KEY].render
+      if (effects.indexOf(fn) === -1) {
+        effects.push(fn)
+      }
     },
   }
 }
