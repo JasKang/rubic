@@ -1,3 +1,10 @@
+## [0.0.2-beta.4](https://github.com/JasKang/jweapp/compare/0.0.2-beta.3...0.0.2-beta.4) (2022-01-11)
+
+
+### Bug Fixes
+
+* types ([4143571](https://github.com/JasKang/jweapp/commit/41435710cb3ef36d47060a443fd600c4d4ab2506))
+
 ## 0.0.2-beta.3 (2022-01-11)
 
 
