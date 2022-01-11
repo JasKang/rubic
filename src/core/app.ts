@@ -3,10 +3,10 @@ import { appCore } from './instance'
 import { wrapAppHooks } from './lifetimes'
 import type { Expand } from './types'
 
-type LaunchOptions = WechatMiniprogram.App.LaunchShowOption
+type LaunchOptions = Expand<WechatMiniprogram.App.LaunchShowOption>
 
 export type AppOption = {
-  setup: (options: Expand<LaunchOptions>) => Record<string, any>
+  setup: (options: LaunchOptions) => Record<string, any> | undefined
 }
 
 export function createApp(options: AppOption) {

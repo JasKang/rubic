@@ -11,19 +11,28 @@ export {
   ComputedRef,
   Ref,
 } from '@vue/reactivity'
-export { createApp } from './core/app'
+export { createApp, AppOption } from './core/app'
 export { defineComponent, definePage } from './core/component'
 export { getCurrentInstance, CustomPageContext, CustomComponentContext } from './core/instance'
 export { watch, watchEffect } from './core/watch'
 
 export {
+  onAppShow,
+  onAppHide,
+  onAppError,
+  onAppPageNotFound,
+  onAppUnhandledRejection,
+  onAppThemeChange,
+  //
   onReady,
   onMoved,
   onDetached,
   onError,
+  //
   onShow,
   onHide,
   onResize,
+  //
   onLoad,
   onUnload,
   onPullDownRefresh,
