@@ -1,6 +1,6 @@
-import { EffectScope, readonly } from '@vue/reactivity'
+import { readonly } from '@vue/reactivity'
 import { CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES, PAGE_ON_METHODS } from './constants'
-import type { ComponentInstance, Instance, NextRender, PageInstance } from './instance'
+import type { ComponentInstance, Instance, PageInstance } from './instance'
 import { createCore, setCurrentInstance } from './instance'
 import type { ComponentPropsOptions, PropsRaw } from './props'
 import { convertToProperties } from './props'
@@ -27,10 +27,6 @@ export type ComponentOptions<
   options?: WechatMiniprogram.Component.ComponentOptions
 }
 
-export interface ComponentCustomContext {
-  nextRender: NextRender
-}
-
 function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
   componentOptions: ComponentOptions<PropsOptions, IsPage>,
   isPage: IsPage
@@ -53,29 +49,29 @@ function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
   }
 
   const attached = function (this: Instance) {
-    const self = this
-    const core = self[CORE_KEY]
-    setCurrentInstance(self)
-    core.render.patchData = core.render.patchData.bind(self)
+    const ctx = this
+    const core = this[CORE_KEY]
+    setCurrentInstance(this)
     for (const prop of propsKeys) {
-      core.props[prop] = self.data[prop]
+      core.props[prop] = this.data[prop]
     }
     const props = readonly(core.props) as PropsRaw<PropsOptions>
-    const bindings = setup(props, self as any) || {}
+    ctx.$nextRender = core.nextRender
+    const bindings = setup(props, ctx as any) || {}
     core.bindings = bindings
     if (bindings) {
       Object.keys(bindings).forEach((key: string) => {
         const value = bindings[key]
         if (isFunction(value)) {
           // @ts-expect-error: bindings 函数
-          self[key] = value
+          this[key] = value
           return
         }
-        self.setData({ [key]: bindingToRaw(value) })
-        watchBinding.call(self, key, value)
+        this.setData({ [key]: bindingToRaw(value) })
+        watchBinding.call(this, key, value)
       })
     }
-    watchRender.call(self)
+    watchRender.call(this)
     setCurrentInstance(null)
   }
 
@@ -107,7 +103,7 @@ function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
     ),
     lifetimes: {
       created(this: Instance) {
-        this[CORE_KEY] = createCore(isPage)
+        this[CORE_KEY] = createCore(this, isPage)
       },
       attached,
       detached,

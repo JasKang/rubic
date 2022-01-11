@@ -1,7 +1,13 @@
 import type { ShallowReactive } from '@vue/reactivity'
 import { reactive, shallowReactive, EffectScope } from '@vue/reactivity'
 import type { HookType } from './constants'
-import { CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES, PAGE_ON_METHODS } from './constants'
+import {
+  APP_LIFETIMES,
+  CORE_KEY,
+  COMPONENT_LIFETIMES,
+  PAGE_LIFETIMES,
+  PAGE_ON_METHODS,
+} from './constants'
 
 import type { Data, Func } from './types'
 import { arrayToRecord, bindingToRaw } from './util'
@@ -35,11 +41,13 @@ export type Core = {
 export interface CustomPageContext {}
 export interface CustomComponentContext {}
 
+export type InstanceCore = { [CORE_KEY]: Core; $nextRender: NextRender }
+
 export type PageInstance = WechatMiniprogram.Component.Instance<
   Data,
   {},
   {},
-  { [CORE_KEY]: Core } & CustomPageContext,
+  InstanceCore & CustomPageContext,
   true
 >
 
@@ -47,7 +55,7 @@ export type ComponentInstance = WechatMiniprogram.Component.Instance<
   Data,
   {},
   {},
-  { [CORE_KEY]: Core } & CustomComponentContext,
+  InstanceCore & CustomComponentContext,
   false
 >
 
@@ -70,7 +78,7 @@ export function getCurrentInstance() {
   return currentInstance
 }
 
-export function createCore(isPage: boolean): Core {
+export function createCore(instance: Instance, isPage: boolean): Core {
   return {
     props: shallowReactive<Record<string, any>>({}),
     scope: new EffectScope(),
@@ -84,31 +92,42 @@ export function createCore(isPage: boolean): Core {
     render: {
       effects: [],
       keys: reactive<string[]>([]),
-      patchData(this: Instance) {
+      patchData() {
         return new Promise(resolve => {
-          const { keys } = this[CORE_KEY].render
+          const { keys } = instance[CORE_KEY].render
           if (keys.length > 0) {
             const patchObj: Record<string, any> = {}
             for (const key of keys) {
-              patchObj[key] = bindingToRaw(this[CORE_KEY].bindings[key])
+              patchObj[key] = bindingToRaw(instance[CORE_KEY].bindings[key])
             }
-            this.setData(patchObj, () => {
-              const { effects } = this[CORE_KEY].render
+            instance.setData(patchObj, () => {
+              const { effects } = instance[CORE_KEY].render
               for (const effect of effects) {
                 effect()
               }
-              this[CORE_KEY].render.effects = []
+              instance[CORE_KEY].render.effects = []
               resolve()
             })
           }
         })
       },
     },
-    nextRender(this: Instance, fn: (this: Instance) => void) {
-      const { effects } = this[CORE_KEY].render
+    nextRender(fn: (this: Instance) => void) {
+      const { effects } = instance[CORE_KEY].render
       if (effects.indexOf(fn) === -1) {
         effects.push(fn)
       }
     },
   }
+}
+
+export type AppCore = {
+  hooks: {
+    [key in typeof APP_LIFETIMES[number]]: Func[]
+  }
+  isPending: boolean
+}
+export const appCore: AppCore = {
+  hooks: arrayToRecord(APP_LIFETIMES, () => []),
+  isPending: false,
 }

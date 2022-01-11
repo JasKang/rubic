@@ -46,7 +46,7 @@ module.exports = {
     '@typescript-eslint/no-this-alias': [
       'error',
       {
-        allowedNames: ['self'], // Allow `const self = this`; `[]` by default
+        allowedNames: ['self', 'ctx'], // Allow `const self = this`; `[]` by default
       },
     ],
   },

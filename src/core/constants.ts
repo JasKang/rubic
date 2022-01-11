@@ -1,8 +1,16 @@
 export const CORE_KEY = '__j_core__' as const
 
+export const APP_LIFETIMES = [
+  'onShow',
+  'onHide',
+  'onError',
+  'onPageNotFound',
+  'onUnhandledRejection',
+  'onThemeChange',
+] as const
+
 export const COMPONENT_LIFETIMES = ['ready', 'moved', 'detached', 'error'] as const
 export const PAGE_LIFETIMES = ['show', 'hide', 'resize'] as const
-
 export const PAGE_ON_METHODS = [
   'onLoad',
   'onReady',
