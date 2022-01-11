@@ -3,9 +3,9 @@
   "version": "0.0.2-beta.5",
   "description": "jweapp",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "miniprogram": "dist",
-  "type": "module",
   "files": [
     "dist"
   ],
