@@ -1,3 +1,10 @@
+## [0.0.2-beta.5](https://github.com/JasKang/jweapp/compare/0.0.2-beta.4...0.0.2-beta.5) (2022-01-11)
+
+
+### Bug Fixes
+
+* remove flush ([f780853](https://github.com/JasKang/jweapp/commit/f7808539bd9b1bbeb75fe5d4dae86970b37f63e5))
+
 ## [0.0.2-beta.4](https://github.com/JasKang/jweapp/compare/0.0.2-beta.3...0.0.2-beta.4) (2022-01-11)
 
 
