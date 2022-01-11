@@ -9,16 +9,18 @@ import { bindingToRaw, isFunction } from './util'
 import { watchBinding, watchRender } from './bindings'
 import { wrapHooks } from './lifetimes'
 
+export type Setup<Props, IsPage> = (
+  props: Props,
+  ctx: IsPage extends false ? ComponentInstance : PageInstance
+) => Record<string, any> | void
+
 export type ComponentOptions<
   PropsOptions = ComponentPropsOptions,
   IsPage extends boolean = false,
   Props = PropsRaw<PropsOptions>
 > = {
   props: PropsOptions
-  setup: (
-    props: Props,
-    ctx: IsPage extends false ? ComponentInstance : PageInstance
-  ) => Record<string, any> | void
+  setup: Setup<Props, IsPage>
   behaviors?: []
   externalClasses?: string[]
   relations?: {}
@@ -47,27 +49,20 @@ function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
 
   const detached = function (this: Instance) {
     onDetached.call(this)
-    this[CORE_KEY].scope?.stop()
+    this[CORE_KEY].scope.stop()
   }
 
   const attached = function (this: Instance) {
     const self = this
     const core = self[CORE_KEY]
     setCurrentInstance(self)
-
-    // core.render.keys = reactive([])
     core.render.patchData = core.render.patchData.bind(self)
-    core.scope = new EffectScope()
-
     for (const prop of propsKeys) {
       core.props[prop] = self.data[prop]
     }
     const props = readonly(core.props) as PropsRaw<PropsOptions>
-
     const bindings = setup(props, self as any) || {}
     core.bindings = bindings
-    setCurrentInstance(null)
-
     if (bindings) {
       Object.keys(bindings).forEach((key: string) => {
         const value = bindings[key]
@@ -77,11 +72,11 @@ function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
           return
         }
         self.setData({ [key]: bindingToRaw(value) })
-
         watchBinding.call(self, key, value)
       })
     }
     watchRender.call(self)
+    setCurrentInstance(null)
   }
 
   const observers: Record<string, any> = {}

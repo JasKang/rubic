@@ -1,9 +1,9 @@
-import type { EffectScope, ShallowReactive } from '@vue/reactivity'
-import { reactive, shallowReactive } from '@vue/reactivity'
+import type { ShallowReactive } from '@vue/reactivity'
+import { reactive, shallowReactive, EffectScope } from '@vue/reactivity'
 import type { HookType } from './constants'
 import { CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES, PAGE_ON_METHODS } from './constants'
 
-import type { Data, Expand, Func } from './types'
+import type { Data, Func } from './types'
 import { arrayToRecord, bindingToRaw } from './util'
 
 export type NextRender = (fn: () => void) => void
@@ -22,7 +22,7 @@ export type Core = {
       [key in HookType['Method']]: Func[]
     }
   }
-  scope?: EffectScope
+  scope: EffectScope
   bindings: Record<string, any>
   render: {
     effects: Array<() => void>
@@ -57,9 +57,11 @@ let currentInstance: Instance | null = null
 
 export function setCurrentInstance(instance: Instance | null) {
   if (instance) {
-    instance[CORE_KEY].scope?.on()
+    instance[CORE_KEY].scope.on()
   } else {
-    currentInstance?.[CORE_KEY].scope?.off()
+    if (currentInstance) {
+      currentInstance[CORE_KEY].scope.off()
+    }
   }
   currentInstance = instance
 }
@@ -71,6 +73,7 @@ export function getCurrentInstance() {
 export function createCore(isPage: boolean): Core {
   return {
     props: shallowReactive<Record<string, any>>({}),
+    scope: new EffectScope(),
     isPage: isPage,
     hooks: {
       lifetimes: arrayToRecord(COMPONENT_LIFETIMES, () => []),

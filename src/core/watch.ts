@@ -188,10 +188,6 @@ function doWatch(
     } else {
       // no cb -> simple effect
       getter = () => {
-        // TODO: 卸载状态
-        if (instance && instance.isUnmounted) {
-          return
-        }
         if (cleanup) {
           cleanup()
         }
@@ -283,9 +279,8 @@ function doWatch(
 
   return () => {
     effect.stop()
-    const scope = instance?.[CORE_KEY].scope
-    if (scope) {
-      remove(scope.effects, effect)
+    if (instance) {
+      remove(instance[CORE_KEY].scope.effects, effect)
     }
   }
 }
