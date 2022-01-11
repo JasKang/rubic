@@ -6,7 +6,7 @@ import type { Expand } from './types'
 type LaunchOptions = Expand<WechatMiniprogram.App.LaunchShowOption>
 
 export type AppOption = {
-  setup: (options: LaunchOptions) => Record<string, any> | undefined
+  setup: (options: LaunchOptions) => Record<string, any> | void
 }
 
 export function createApp(options: AppOption) {

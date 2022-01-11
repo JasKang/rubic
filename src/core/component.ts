@@ -141,36 +141,36 @@ export function definePage<PropsOptions extends ComponentPropsOptions>(
   return Component(originOptions)
 }
 
-definePage({
-  props: {
-    a: String,
-    b: {
-      type: Number,
-    },
-    c: {
-      type: [String, Number],
-      value: 'asd',
-    },
-  },
-  setup(props, ctx) {
-    // ctx.
-    props.c
-  },
-})
+// definePage({
+//   props: {
+//     a: String,
+//     b: {
+//       type: Number,
+//     },
+//     c: {
+//       type: [String, Number],
+//       value: 'asd',
+//     },
+//   },
+//   setup(props, ctx) {
+//     // ctx.
+//     props.c
+//   },
+// })
 
-defineComponent({
-  props: {
-    a: String,
-    b: {
-      type: Number,
-    },
-    c: {
-      type: [String, Number],
-      value: 'asd',
-    },
-  },
-  setup(props, ctx) {
-    // ctx.asdf
-    props.c
-  },
-})
+// defineComponent({
+//   props: {
+//     a: String,
+//     b: {
+//       type: Number,
+//     },
+//     c: {
+//       type: [String, Number],
+//       value: 'asd',
+//     },
+//   },
+//   setup(props, ctx) {
+//     // ctx.asdf
+//     props.c
+//   },
+// })
