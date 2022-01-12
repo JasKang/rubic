@@ -33,6 +33,7 @@ module.exports = {
     '@typescript-eslint/consistent-type-imports': 2,
     '@typescript-eslint/no-unsafe-assignment': 0,
     '@typescript-eslint/no-empty-interface': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/ban-types': [
       'error',
       {

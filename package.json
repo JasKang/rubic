@@ -45,6 +45,7 @@
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.4",
+    "j-component": "^1.4.5",
     "jest": "^27.4.7",
     "miniprogram-simulate": "^1.4.3",
     "prettier": "^2.5.1",
