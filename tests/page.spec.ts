@@ -5,22 +5,10 @@ describe('page', () => {
   test('page lifetimes', async () => {
     const calledKeys: string[] = []
     const page = await renderPage(
-      {
-        template: '<div id="text" bind:tap="tap">data: {{text}}</div>',
-        props: {
-          query1: 'query1',
-          query2: 'query2',
-          query3: 'query3',
-        },
-      },
+      { template: '<div id="text" bind:tap="tap">data: {{text}}</div>' },
       () => {
         definePage({
-          props: {
-            query1: String,
-            query2: String,
-            query3: String,
-          },
-          setup(props, ctx) {
+          setup() {
             calledKeys.push('onAttach')
             onShow(() => {
               calledKeys.push('onShow')
@@ -54,13 +42,25 @@ describe('page', () => {
     page.detach()
     expect(calledKeys[calledKeys.length - 1]).toEqual('onDetached')
   })
+  test('raw binding', async () => {
+    const page = await renderPage(
+      { template: '<div id="text" bind:tap="tap">num:{{num}},numRef:{{numRef}}</div>' },
+      () =>
+        definePage({
+          setup() {
+            const num = 0
+            const numRef = ref(0)
+            const tap = () => {
+              numRef.value++
+            }
+            return { num, numRef, tap }
+          },
+        })
+    )
+    await sleep(10)
+    expect(page.dom!.innerHTML).toBe('<div>num:0,numRef:0</div>') // 判断组件渲染结果
+    page.querySelector('#text')?.dispatchEvent('tap')
+    await sleep(10)
+    expect(page.dom!.innerHTML).toBe('<div>num:0,numRef:1</div>') // 判断组件渲染结果
+  })
 })
-
-// await sleep(100)
-// expect(page.dom!.innerHTML).toBe('<wx-view>data: text</wx-view>') // 判断组件渲染结果
-// page.querySelector('#text')?.dispatchEvent('tap')
-// expect(page.dom!.innerHTML).toBe('<wx-view>data: taped</wx-view>') // 判断组件渲染结果
-// page.querySelector('#text')?.dispatchEvent('tap')
-// await sleep(10)
-// expect(page.dom!.innerHTML).toBe('<wx-view>data: text</wx-view>') // 判断组件渲染结果
-// 执行其他的一些测试逻辑

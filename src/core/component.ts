@@ -19,12 +19,12 @@ export type ComponentOptions<
   IsPage extends boolean = false,
   Props = PropsRaw<PropsOptions>
 > = {
-  props: PropsOptions
-  setup: Setup<Props, IsPage>
+  props?: PropsOptions
   behaviors?: []
   externalClasses?: string[]
   relations?: {}
   options?: WechatMiniprogram.Component.ComponentOptions
+  setup: Setup<Props, IsPage>
 }
 
 function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(

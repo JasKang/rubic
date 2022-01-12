@@ -47,12 +47,12 @@ export async function renderPage(options: RenderOptions, define: () => void) {
   const root = jComponent.create(options.id, options.props)
   const parent = document.createElement(`${options.id}-wrapper`)
   root.attach(parent)
-  root.instance.onLoad()
-  Promise.resolve().then(() => {
-    root.instance.onReady()
-  })
+  root.instance.onLoad(options.props)
+  await sleep(10)
   // @ts-ignore
   root.triggerPageLifeTime('show')
+  await sleep(10)
+  root.instance.onReady()
   return root
 }
 
