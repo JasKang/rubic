@@ -3,7 +3,7 @@ import { definePage, onDetached, onLoad, onMoved, onReady, onShow, ref } from '.
 
 describe('page', () => {
   test('page lifetimes', async () => {
-    const lifetimeStack: string[] = []
+    const calledKeys: string[] = []
     const page = await renderPage(
       {
         template: '<div id="text" bind:tap="tap">data: {{text}}</div>',
@@ -21,53 +21,38 @@ describe('page', () => {
             query3: String,
           },
           setup(props, ctx) {
-            const text = ref('text')
-            const tap = () => {
-              text.value = text.value === 'taped' ? 'text' : 'taped'
-            }
-            lifetimeStack.push('onAttach')
+            calledKeys.push('onAttach')
             onShow(() => {
-              lifetimeStack.push('onShow')
+              calledKeys.push('onShow')
             })
             onReady(() => {
-              lifetimeStack.push('onReady')
+              calledKeys.push('onReady')
             })
-
             onMoved(() => {
-              lifetimeStack.push('onMoved')
+              calledKeys.push('onMoved')
             })
             onDetached(() => {
-              lifetimeStack.push('onDetached')
+              calledKeys.push('onDetached')
             })
             onLoad(() => {
-              lifetimeStack.push('onLoad')
+              calledKeys.push('onLoad')
             })
             onReady(() => {
-              lifetimeStack.push('onReady 2')
+              calledKeys.push('onReady 2')
             })
             onLoad(() => {
-              lifetimeStack.push('onLoad 2')
+              calledKeys.push('onLoad 2')
             })
-            return {
-              text,
-              tap,
-            }
+            return {}
           },
         })
       }
     )
-    expect(lifetimeStack).toEqual([
-      'onAttach',
-      'onLoad',
-      'onLoad 2',
-      'onShow',
-      'onReady',
-      'onReady 2',
-    ])
+    expect(calledKeys).toEqual(['onAttach', 'onLoad', 'onLoad 2', 'onShow', 'onReady', 'onReady 2'])
     page.triggerLifeTime('moved')
-    expect(lifetimeStack[lifetimeStack.length - 1]).toEqual('onMoved')
+    expect(calledKeys[calledKeys.length - 1]).toEqual('onMoved')
     page.detach()
-    expect(lifetimeStack[lifetimeStack.length - 1]).toEqual('onDetached')
+    expect(calledKeys[calledKeys.length - 1]).toEqual('onDetached')
   })
 })
 
