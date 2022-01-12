@@ -2,8 +2,8 @@
   "name": "jweapp",
   "version": "0.0.2-beta.5",
   "description": "jweapp",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "miniprogram": "dist",
   "files": [
