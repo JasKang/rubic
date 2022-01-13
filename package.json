@@ -1,6 +1,6 @@
 {
   "name": "jweapp",
-  "version": "0.0.2-beta.5",
+  "version": "0.0.2-beta.6",
   "description": "jweapp",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",

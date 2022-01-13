@@ -1,3 +1,5 @@
+## [0.0.2-beta.6](https://github.com/JasKang/jweapp/compare/0.0.2-beta.5...0.0.2-beta.6) (2022-01-13)
+
 ## [0.0.2-beta.5](https://github.com/JasKang/jweapp/compare/0.0.2-beta.4...0.0.2-beta.5) (2022-01-11)
 
 
