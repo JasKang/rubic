@@ -1,6 +1,32 @@
 module.exports = {
+  // transform: {
+  //   '^.+\\.tsx?$': 'esbuild-jest',
+  // },
   transform: {
-    '^.+\\.tsx?$': 'esbuild-jest',
+    '^.+\\.(t|j)sx?$': [
+      '@swc/jest',
+      {
+        sourceMaps: true,
+        jsc: {
+          parser: {
+            syntax: 'typescript',
+            tsx: true,
+          },
+          transform: {
+            optimizer: {
+              globals: {
+                vars: {
+                  __TEST__: 'true',
+                },
+              },
+            },
+          },
+          target: 'es2020',
+          loose: false,
+          externalHelpers: false,
+        },
+      },
+    ],
   },
   globals: {},
   testEnvironment: 'jsdom',

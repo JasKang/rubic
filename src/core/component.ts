@@ -8,6 +8,7 @@ import type { Expand } from './types'
 import { bindingToRaw, isFunction } from './util'
 import { watchBinding, watchRender } from './bindings'
 import { wrapHooks } from './lifetimes'
+import { error, warn } from './errorHandling'
 
 export type Setup<Props, IsPage> = (
   props: Props,
@@ -67,7 +68,11 @@ function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
           this[key] = value
           return
         }
-        this.setData({ [key]: bindingToRaw(value) })
+        try {
+          this.setData({ [key]: bindingToRaw(value, key) })
+        } catch (err) {
+          error(err as Error, this)
+        }
         watchBinding.call(this, key, value)
       })
     }

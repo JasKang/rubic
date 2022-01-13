@@ -17,5 +17,5 @@
     "sourceMap": true,
     "rootDir": "."
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "tests-dts/**/*.ts"]
+  "include": ["env.d.ts", "src/**/*.ts", "tests/**/*.ts", "tests-dts/**/*.ts", "*.js"]
 }

@@ -22,6 +22,7 @@ export default defineConfig(() => {
     dts: true,
     define: {
       'process.env.NODE_ENV': '"production"',
+      __TEST__: 'false',
     },
     external: depsFilter(Object.keys(deps), []),
     banner: {

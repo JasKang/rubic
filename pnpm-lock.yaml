@@ -2,6 +2,8 @@ lockfileVersion: 5.3
 
 specifiers:
   '@release-it/conventional-changelog': ^3.3.0
+  '@swc/core': ^1.2.128
+  '@swc/jest': ^0.2.16
   '@types/jest': ^27.4.0
   '@types/node': ^12.20.41
   '@types/wechat-miniprogram': ^3.4.0
@@ -24,6 +26,8 @@ specifiers:
 
 devDependencies:
   '@release-it/conventional-changelog': 3.3.0_release-it@14.12.1
+  '@swc/core': 1.2.128
+  '@swc/jest': 0.2.16_@swc+core@1.2.128
   '@types/jest': 27.4.0
   '@types/node': 12.20.41
   '@types/wechat-miniprogram': 3.4.0
@@ -507,6 +511,13 @@ packages:
       - utf-8-validate
     dev: true
 
+  /@jest/create-cache-key-function/27.4.2:
+    resolution: {integrity: sha512-aSSCAJwUNX4R1hJQoyimsND5l+2EsFgzlepS8NuOJJHjXij/UdxYFngac44tmv9IYdI+kglAyORg0plt4/aFMQ==, tarball: '@jest/create-cache-key-function/download/@jest/create-cache-key-function-27.4.2.tgz'}
+    engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
+    dependencies:
+      '@jest/types': 27.4.2
+    dev: true
+
   /@jest/environment/27.4.6:
     resolution: {integrity: sha512-E6t+RXPfATEEGVidr84WngLNWZ8ffCPky8RqqRK6u1Bn0LK92INe0MDttyPl/JOzaq92BmDzOeuqk09TvM22Sg==, tarball: '@jest/environment/download/@jest/environment-27.4.6.tgz'}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -675,6 +686,16 @@ packages:
       chalk: 4.1.2
     dev: true
 
+  /@napi-rs/triples/1.1.0:
+    resolution: {integrity: sha512-XQr74QaLeMiqhStEhLn1im9EOMnkypp7MZOwQhGzqp2Weu5eQJbpPxWxixxlYRKWPOmJjsk6qYfYH9kq43yc2w==, tarball: '@napi-rs/triples/download/@napi-rs/triples-1.1.0.tgz'}
+    dev: true
+
+  /@node-rs/helper/1.3.0:
+    resolution: {integrity: sha512-KPS0EBA1bXtf96IL7wr5bFHxhL2KCZ6kI/hkyLG7nzEq2cDq8pJhOhcJDOLXIPh5J2LEJ5eXyjDTWDFg5eRypw==, tarball: '@node-rs/helper/download/@node-rs/helper-1.3.0.tgz'}
+    dependencies:
+      '@napi-rs/triples': 1.1.0
+    dev: true
+
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha1-dhnC6yGyVIP20WdUi0z9WnSIw9U=, tarball: '@nodelib/fs.scandir/download/@nodelib/fs.scandir-2.1.5.tgz'}
     engines: {node: '>= 8'}
@@ -828,6 +849,154 @@ packages:
     resolution: {integrity: sha1-P9wrbLWJNbIb+40WJesTAEhDFuc=, tarball: '@sinonjs/fake-timers/download/@sinonjs/fake-timers-8.1.0.tgz'}
     dependencies:
       '@sinonjs/commons': 1.8.3
+    dev: true
+
+  /@swc/core-android-arm-eabi/1.2.128:
+    resolution: {integrity: sha512-gERpCKxWWd4UegQu9X5SmbuIRnYxLlyfwpXyIu/ACDvxP7Hip0NWFSy6L1l5ofpMHXFt7zGekiNGzJImaOGV/A==, tarball: '@swc/core-android-arm-eabi/download/@swc/core-android-arm-eabi-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [arm]
+    os: [android]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-android-arm64/1.2.128:
+    resolution: {integrity: sha512-tEsbB52tOwn/Hko4zvLVh3YbuZq0aIvKn7rQT2jTS/NlTefLf1CQJqmgABFn3ZOimgPkNANRvYAZKDvrJm9d4A==, tarball: '@swc/core-android-arm64/download/@swc/core-android-arm64-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [android]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-darwin-arm64/1.2.128:
+    resolution: {integrity: sha512-EoF/ps3afvNIW3TSYwEMeFh6Q1IjN1ZRAZ4oVa2HllQ7CsUI1C2dMMNMZRipm5ESQiUbIVcZ/WQ6pOcnyn033A==, tarball: '@swc/core-darwin-arm64/download/@swc/core-darwin-arm64-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-darwin-x64/1.2.128:
+    resolution: {integrity: sha512-wdIYDQ35qmPICvgtnRghj5t8M29ZOL0Bnb8lMr1L+iEDI09j8GQAJkyrjNzAxHzSneuAPmv2TUcXc1yFFqhaiA==, tarball: '@swc/core-darwin-x64/download/@swc/core-darwin-x64-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-freebsd-x64/1.2.128:
+    resolution: {integrity: sha512-YyVCyOupZOsNwnWPI6hMHf4qCClUbeEIKwugOePcbiSgSfZXrCYU1DljWHyKDdnyaiRGUmmPF6UlpdfxyOgPSg==, tarball: '@swc/core-freebsd-x64/download/@swc/core-freebsd-x64-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [freebsd]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-linux-arm-gnueabihf/1.2.128:
+    resolution: {integrity: sha512-W8KT3Li+NWxZaRcSwvQUycDa8tN6tQDPonLTqTPPqWbVpWj6U9hc0pojylJIb3QjUZSIXxbXVlVDmezJgmHZ4w==, tarball: '@swc/core-linux-arm-gnueabihf/download/@swc/core-linux-arm-gnueabihf-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [arm]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-linux-arm64-gnu/1.2.128:
+    resolution: {integrity: sha512-7bmECX5hs/1xx6m+VBgzVSRhyjP+R/30KVJfTO9pYO9AATCAbOWElyKhIkMKH8N9g/sNmS1g1vy1yfE0y+xoKg==, tarball: '@swc/core-linux-arm64-gnu/download/@swc/core-linux-arm64-gnu-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-linux-arm64-musl/1.2.128:
+    resolution: {integrity: sha512-i0SIv1BwpEaIo56BQyOBiik+N/2n4ZqND2NxT/Xs7xvhyBSNZUwVSAW+6xNlcY5sJ4GVFTHRungf5QWKtgCOXg==, tarball: '@swc/core-linux-arm64-musl/download/@swc/core-linux-arm64-musl-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-linux-x64-gnu/1.2.128:
+    resolution: {integrity: sha512-7Toh4KQUqc/KZiyuyzrUmoiE9Zh+jixXZqg6TntVOf9EKE2ZrOP1USjPT/QaaSfcOdEt64Neu53ypIx4ZRIXVQ==, tarball: '@swc/core-linux-x64-gnu/download/@swc/core-linux-x64-gnu-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-linux-x64-musl/1.2.128:
+    resolution: {integrity: sha512-v5CT82NsGpN7UX6FtMpFKlU5pAwfm4BQxICOF5tM5JU4sedvNoSTlrZbXoKPL+zxSdhNOTX+aI8SAygM6dcW9Q==, tarball: '@swc/core-linux-x64-musl/download/@swc/core-linux-x64-musl-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-win32-arm64-msvc/1.2.128:
+    resolution: {integrity: sha512-wzWcOKbfrBrm7ZTX9G51aTblDpil4sM3fN8thFR5EctxinvnpYaaW8ZUQ6d1dfbc5xDTTUNJWi6d6PRSzt85cA==, tarball: '@swc/core-win32-arm64-msvc/download/@swc/core-win32-arm64-msvc-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-win32-ia32-msvc/1.2.128:
+    resolution: {integrity: sha512-fz7YfX8RTHm6PmqL8L64xK6R6y0/rn8JgmLd7lwmTRta07eJyqvzESZQSUg/CIJd90mS0wLmTmkEhj8FoXOBNg==, tarball: '@swc/core-win32-ia32-msvc/download/@swc/core-win32-ia32-msvc-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core-win32-x64-msvc/1.2.128:
+    resolution: {integrity: sha512-7Pm4+kN8cXSgwil7/wrlFVpn1h6CTvfVVBcZvfHV8jllQlUnN2GZ1FnOfoeBLfrXyaegHWkbPaKJDEYh69jNcQ==, tarball: '@swc/core-win32-x64-msvc/download/@swc/core-win32-x64-msvc-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@swc/core/1.2.128:
+    resolution: {integrity: sha512-bcs62TYhk7NmGHeP0bBf7cphODVxy+Rh0E5hiak6FcNVr7TUtcsaH8GIQTYdWlpv1rX+FaXCFdIhD4yIyJrqDQ==, tarball: '@swc/core/download/@swc/core-1.2.128.tgz'}
+    engines: {node: '>=10'}
+    dependencies:
+      '@node-rs/helper': 1.3.0
+    optionalDependencies:
+      '@swc/core-android-arm-eabi': 1.2.128
+      '@swc/core-android-arm64': 1.2.128
+      '@swc/core-darwin-arm64': 1.2.128
+      '@swc/core-darwin-x64': 1.2.128
+      '@swc/core-freebsd-x64': 1.2.128
+      '@swc/core-linux-arm-gnueabihf': 1.2.128
+      '@swc/core-linux-arm64-gnu': 1.2.128
+      '@swc/core-linux-arm64-musl': 1.2.128
+      '@swc/core-linux-x64-gnu': 1.2.128
+      '@swc/core-linux-x64-musl': 1.2.128
+      '@swc/core-win32-arm64-msvc': 1.2.128
+      '@swc/core-win32-ia32-msvc': 1.2.128
+      '@swc/core-win32-x64-msvc': 1.2.128
+    dev: true
+
+  /@swc/jest/0.2.16_@swc+core@1.2.128:
+    resolution: {integrity: sha512-/pvw2kJmqplf+gPHbiMoFcbLVYamMn81ZZrr3M5ye4BfG2ue492UMBX5cwZw1HcMo0mT/N50wUS9/wsJBy+n0Q==, tarball: '@swc/jest/download/@swc/jest-0.2.16.tgz'}
+    engines: {npm: '>= 7.0.0'}
+    peerDependencies:
+      '@swc/core': '*'
+    dependencies:
+      '@jest/create-cache-key-function': 27.4.2
+      '@swc/core': 1.2.128
     dev: true
 
   /@szmarczak/http-timer/1.1.2:

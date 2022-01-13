@@ -74,9 +74,13 @@ export function error(err: Error, instance?: Instance | null, type?: ErrorTypes)
   }
   err.message = `[Jweapp]: ${err.message}`
   if (instance) {
-    err.message += ` instance:${instance.is}`
+    err.message += ` | instance: ${instance.is}`
   }
-  throw err
+  if (__TEST__) {
+    console.error(err.message)
+  } else {
+    throw err
+  }
 }
 
 export function warn(msg: string, instance?: Instance | null) {
@@ -86,7 +90,7 @@ export function warn(msg: string, instance?: Instance | null) {
 
   let message = `[Jweapp]: ${msg}`
   if (instance) {
-    message += ` instance:${instance.is}`
+    message += ` | instance: ${instance.is}`
   }
   console.warn(message)
 

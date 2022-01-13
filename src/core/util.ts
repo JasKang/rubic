@@ -49,26 +49,25 @@ export function arrayToRecord<T extends readonly string[], R = any>(
   return obj
 }
 
-export function bindingToRaw(x: unknown): unknown {
+export function bindingToRaw(x: unknown, key: string): unknown {
   if (isJsonType(x) || isFunction(x)) {
     return x
   }
   if (isRef(x)) {
-    return bindingToRaw(x.value)
+    return bindingToRaw(x.value, key)
   }
   if (isProxy(x)) {
-    return bindingToRaw(toRaw(x))
+    return bindingToRaw(toRaw(x), key)
   }
   if (isArray(x)) {
-    return x.map(item => bindingToRaw(item))
+    return x.map(item => bindingToRaw(item, key))
   }
   if (isPlainObject(x)) {
     const obj: Record<string, unknown> = {}
     Object.keys(x).forEach(key => {
-      obj[key] = bindingToRaw(x[key])
+      obj[key] = bindingToRaw(x[key], key)
     })
     return obj
   }
-
-  throw new TypeError(`${toTypeString(x)} value is not supported`)
+  throw new Error(`setup 含有不支持类型 ${key}\:${toTypeString(x)} 类型.`)
 }

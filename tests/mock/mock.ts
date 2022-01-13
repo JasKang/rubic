@@ -12,6 +12,7 @@ let tempLoad: RenderOptions | null = null
 /**
  * 自定义组件构造器
  */
+// @ts-ignore
 global.Component = (options: any) => {
   const component = tempLoad!
   const definition = Object.assign(
@@ -46,7 +47,12 @@ export async function renderPage(options: RenderOptions, define: () => void) {
   define()
   const root = jComponent.create(options.id, options.props)
   const parent = document.createElement(`${options.id}-wrapper`)
-  root.attach(parent)
+  try {
+    root.attach(parent)
+  } catch (error) {
+    console.log('renderPage error')
+  }
+
   root.instance.onLoad(options.props)
   await sleep(10)
   // @ts-ignore

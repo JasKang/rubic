@@ -98,7 +98,7 @@ export function createCore(instance: Instance, isPage: boolean): Core {
           if (keys.length > 0) {
             const patchObj: Record<string, any> = {}
             for (const key of keys) {
-              patchObj[key] = bindingToRaw(instance[CORE_KEY].bindings[key])
+              patchObj[key] = bindingToRaw(instance[CORE_KEY].bindings[key], key)
             }
             instance.setData(patchObj, () => {
               const { effects } = instance[CORE_KEY].render

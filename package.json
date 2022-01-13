@@ -34,6 +34,8 @@
   },
   "devDependencies": {
     "@release-it/conventional-changelog": "^3.3.0",
+    "@swc/core": "^1.2.128",
+    "@swc/jest": "^0.2.16",
     "@types/jest": "^27.4.0",
     "@types/node": "^12.20.41",
     "@types/wechat-miniprogram": "^3.4.0",
