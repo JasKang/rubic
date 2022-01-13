@@ -47,12 +47,7 @@ export async function renderPage(options: RenderOptions, define: () => void) {
   define()
   const root = jComponent.create(options.id, options.props)
   const parent = document.createElement(`${options.id}-wrapper`)
-  try {
-    root.attach(parent)
-  } catch (error) {
-    console.log('renderPage error')
-  }
-
+  root.attach(parent)
   root.instance.onLoad(options.props)
   await sleep(10)
   // @ts-ignore

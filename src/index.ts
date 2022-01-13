@@ -14,6 +14,7 @@ export {
 export { createApp, AppOption } from './core/app'
 export { defineComponent, definePage } from './core/component'
 export { getCurrentInstance, CustomPageContext, CustomComponentContext } from './core/instance'
+export { CORE_KEY } from './core/constants'
 export { watch, watchEffect } from './core/watch'
 
 export {

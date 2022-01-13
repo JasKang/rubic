@@ -9,12 +9,12 @@ import {
   ref,
   reactive,
   computed,
+  watchEffect,
+  CORE_KEY,
 } from '../src'
+import type { Core } from '../src/core/instance'
 
 describe('page', () => {
-  beforeAll(() => {
-    mockConsole()
-  })
   test('lifetimes', async () => {
     const calledKeys: string[] = []
     const page = await renderPage(
@@ -55,6 +55,14 @@ describe('page', () => {
     page.detach()
     expect(calledKeys[calledKeys.length - 1]).toEqual('onDetached')
   })
+
+  it('lifetime outside setup', () => {
+    const resetConsole = mockConsole()
+    onShow(() => {})
+    expect(console.error).toBeCalledWith('[Jweapp]: 当前没有实例 无法创建show钩子.')
+    resetConsole()
+  })
+
   test('base binding', async () => {
     const page = await renderPage(
       {
@@ -83,23 +91,61 @@ describe('page', () => {
     await sleep(10)
     expect(page.dom!.innerHTML).toBe('<div>count:2 countX2:4 numRef:1</div>')
   })
+
   test('error binding', async () => {
-    await renderPage(
-      {
-        id: 'id',
-        template: '<div></div>',
-      },
-      () =>
-        definePage({
-          setup() {
-            const sym = Symbol('sym')
-            return { sym: sym }
-          },
-        })
+    const resetConsole = mockConsole()
+    await renderPage({ id: 'id', template: '<div></div>' }, () =>
+      definePage({
+        setup() {
+          const sym = Symbol('sym')
+          return { sym: sym }
+        },
+      })
     )
-    sleep(10)
+    await sleep(10)
     expect(console.error).toBeCalledWith(
       '[Jweapp]: setup 含有不支持类型 sym:[object Symbol] 类型. | instance: id'
     )
+    resetConsole()
+  })
+
+  test('reactive watch', async () => {
+    let dummy = 0
+    let stopper: () => void
+    const page = await renderPage({ template: '<div></div>' }, () =>
+      definePage({
+        setup() {
+          const count = ref(0)
+          const increment = (): void => {
+            count.value++
+          }
+          stopper = watchEffect(() => {
+            dummy = count.value
+          })
+          return {
+            count,
+            increment,
+          }
+        },
+      })
+    )
+    sleep(10)
+    const core = page.instance[CORE_KEY] as unknown as Core
+    expect(dummy).toBe(0)
+    expect(page.data.count).toBe(0)
+    expect(core.scope.effects.length).toBe(3)
+
+    page.instance.increment()
+    await sleep(10)
+    expect(dummy).toBe(1)
+    expect(page.data.count).toBe(1)
+
+    await sleep(10)
+    stopper!()
+    page.instance.increment()
+    await sleep(10)
+    expect(dummy).toBe(1)
+    expect(page.data.count).toBe(2)
+    expect(core.scope.effects.length).toBe(2)
   })
 })
