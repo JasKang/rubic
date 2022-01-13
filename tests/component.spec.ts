@@ -1,8 +1,7 @@
-import { mockConsole, renderPage, sleep } from './mock'
+import { mockConsole, renderComponent, sleep } from './mock'
 import {
-  definePage,
+  defineComponent,
   onDetached,
-  onLoad,
   onMoved,
   onReady,
   onShow,
@@ -18,15 +17,12 @@ import type { Core } from '../src/core/instance'
 describe('page', () => {
   test('lifetimes', async () => {
     const calledKeys: string[] = []
-    const page = await renderPage(
+    const page = await renderComponent(
       { template: '<div id="text" bind:tap="tap">data: {{text}}</div>' },
       () => {
-        definePage({
+        defineComponent({
           setup() {
             calledKeys.push('onAttach')
-            onShow(() => {
-              calledKeys.push('onShow')
-            })
             onReady(() => {
               calledKeys.push('onReady')
             })
@@ -36,35 +32,36 @@ describe('page', () => {
             onDetached(() => {
               calledKeys.push('onDetached')
             })
-            onLoad(() => {
-              calledKeys.push('onLoad')
-            })
             onReady(() => {
               calledKeys.push('onReady 2')
-            })
-            onLoad(() => {
-              calledKeys.push('onLoad 2')
             })
             return {}
           },
         })
       }
     )
-    expect(calledKeys).toEqual(['onAttach', 'onLoad', 'onLoad 2', 'onShow', 'onReady', 'onReady 2'])
+    expect(calledKeys).toEqual(['onAttach', 'onReady', 'onReady 2'])
     page.triggerLifeTime('moved')
     expect(calledKeys[calledKeys.length - 1]).toEqual('onMoved')
     page.detach()
     expect(calledKeys[calledKeys.length - 1]).toEqual('onDetached')
   })
 
+  it('lifetime outside setup', () => {
+    const resetConsole = mockConsole()
+    onShow(() => {})
+    expect(console.error).toBeCalledWith('[Jweapp]: 当前没有实例 无法创建show钩子.')
+    resetConsole()
+  })
+
   test('reactive binding', async () => {
-    const page = await renderPage(
+    const page = await renderComponent(
       {
         template:
           '<div id="text" bind:tap="tap">count:{{state.count}} countX2:{{state.countX2}} numRef:{{numRef}}</div>',
       },
       () =>
-        definePage({
+        defineComponent({
           setup() {
             const state: { count: number; countX2: number } = reactive({
               count: 1,
@@ -88,8 +85,8 @@ describe('page', () => {
 
   test('error binding', async () => {
     const resetConsole = mockConsole()
-    await renderPage({ id: 'id', template: '<div></div>' }, () =>
-      definePage({
+    await renderComponent({ id: 'id', template: '<div></div>' }, () =>
+      defineComponent({
         setup() {
           const sym = Symbol('sym')
           return { sym: sym }
@@ -107,8 +104,8 @@ describe('page', () => {
     let dummy = 0
     let tempCount = 0
     let stopper: () => void
-    const page = await renderPage({ template: '<div></div>' }, () =>
-      definePage({
+    const page = await renderComponent({ template: '<div></div>' }, () =>
+      defineComponent({
         setup() {
           const count = ref(0)
           const increment = (): void => {

@@ -1,2 +1,2 @@
-export { sleep, renderPage } from './mock'
+export { sleep, renderPage, renderComponent } from './mock'
 export { mockConsole } from './console'

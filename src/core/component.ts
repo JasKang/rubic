@@ -8,7 +8,7 @@ import type { Expand } from './types'
 import { bindingToRaw, isFunction } from './util'
 import { watchBinding, watchRender } from './bindings'
 import { wrapHooks } from './lifetimes'
-import { error, warn } from './errorHandling'
+import { error } from './errorHandling'
 
 export type Setup<Props, IsPage> = (
   props: Props,

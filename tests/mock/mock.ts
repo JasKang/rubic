@@ -41,6 +41,14 @@ function getId() {
     .join('')
 }
 
+export function sleep(ms: number) {
+  return new Promise<void>(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, ms)
+  })
+}
+
 export async function renderPage(options: RenderOptions, define: () => void) {
   options.id = options.id || getId()
   tempLoad = options
@@ -57,10 +65,14 @@ export async function renderPage(options: RenderOptions, define: () => void) {
   return root
 }
 
-export function sleep(ms: number) {
-  return new Promise<void>(resolve => {
-    setTimeout(() => {
-      resolve()
-    }, ms)
-  })
+export async function renderComponent(options: RenderOptions, define: () => void) {
+  options.id = options.id || getId()
+  tempLoad = options
+  define()
+  const root = jComponent.create(options.id, options.props)
+  const parent = document.createElement(`${options.id}-wrapper`)
+  root.attach(parent)
+  await sleep(10)
+  // root.triggerLifeTime('ready')
+  return root
 }
