@@ -14,10 +14,10 @@ import {
 } from '../src'
 import type { Core } from '../src/core/instance'
 
-describe('page', () => {
+describe('component', () => {
   test('lifetimes', async () => {
     const calledKeys: string[] = []
-    const page = await renderComponent(
+    const comp = await renderComponent(
       { template: '<div id="text" bind:tap="tap">data: {{text}}</div>' },
       () => {
         defineComponent({
@@ -40,10 +40,11 @@ describe('page', () => {
         })
       }
     )
+    comp.render()
     expect(calledKeys).toEqual(['onAttach', 'onReady', 'onReady 2'])
-    page.triggerLifeTime('moved')
+    comp.triggerLifeTime('moved')
     expect(calledKeys[calledKeys.length - 1]).toEqual('onMoved')
-    page.detach()
+    comp.detach()
     expect(calledKeys[calledKeys.length - 1]).toEqual('onDetached')
   })
 
@@ -55,7 +56,7 @@ describe('page', () => {
   })
 
   test('reactive binding', async () => {
-    const page = await renderComponent(
+    const comp = await renderComponent(
       {
         template:
           '<div id="text" bind:tap="tap">count:{{state.count}} countX2:{{state.countX2}} numRef:{{numRef}}</div>',
@@ -76,16 +77,17 @@ describe('page', () => {
           },
         })
     )
+    comp.render()
     await sleep(10)
-    expect(page.dom!.innerHTML).toBe('<div>count:1 countX2:2 numRef:0</div>')
-    page.querySelector('#text')?.dispatchEvent('tap')
+    expect(comp.dom!.innerHTML).toBe('<div>count:1 countX2:2 numRef:0</div>')
+    comp.querySelector('#text')?.dispatchEvent('tap')
     await sleep(10)
-    expect(page.dom!.innerHTML).toBe('<div>count:2 countX2:4 numRef:1</div>')
+    expect(comp.dom!.innerHTML).toBe('<div>count:2 countX2:4 numRef:1</div>')
   })
 
   test('error binding', async () => {
     const resetConsole = mockConsole()
-    await renderComponent({ id: 'id', template: '<div></div>' }, () =>
+    const comp = await renderComponent({ id: 'id', template: '<div></div>' }, () =>
       defineComponent({
         setup() {
           const sym = Symbol('sym')
@@ -93,6 +95,7 @@ describe('page', () => {
         },
       })
     )
+    comp.render()
     await sleep(10)
     expect(console.error).toBeCalledWith(
       '[Jweapp]: setup 含有不支持类型 sym:[object Symbol] 类型. | instance: id'
@@ -104,7 +107,7 @@ describe('page', () => {
     let dummy = 0
     let tempCount = 0
     let stopper: () => void
-    const page = await renderComponent({ template: '<div></div>' }, () =>
+    const comp = await renderComponent({ template: '<div></div>' }, () =>
       defineComponent({
         setup() {
           const count = ref(0)
@@ -124,26 +127,60 @@ describe('page', () => {
         },
       })
     )
+    comp.render()
     sleep(10)
-    const core = page.instance[CORE_KEY] as unknown as Core
+    const core = comp.instance[CORE_KEY] as unknown as Core
     expect(dummy).toBe(0)
     expect(tempCount).toBe(0)
-    expect(page.data.count).toBe(0)
+    expect(comp.data.count).toBe(0)
     expect(core.scope.effects.length).toBe(4)
 
-    page.instance.increment()
+    comp.instance.increment()
     await sleep(10)
     expect(dummy).toBe(1)
     expect(tempCount).toBe(1)
-    expect(page.data.count).toBe(1)
+    expect(comp.data.count).toBe(1)
 
     await sleep(10)
     stopper!()
-    page.instance.increment()
+    comp.instance.increment()
     await sleep(10)
     expect(dummy).toBe(1)
     expect(tempCount).toBe(2)
-    expect(page.data.count).toBe(2)
+    expect(comp.data.count).toBe(2)
     expect(core.scope.effects.length).toBe(3)
+  })
+
+  test('props', async () => {
+    const comp = await renderComponent(
+      {
+        template: '<div id="text">text:{{text}} value:{{value}}</div>',
+        props: {
+          title: '标题',
+          value: 1,
+        },
+      },
+      () =>
+        defineComponent({
+          props: {
+            title: String,
+            desc: {
+              type: String,
+              value: '无描述',
+            },
+            value: {
+              type: [String, Number],
+              value: 10,
+            },
+          },
+          setup(props) {
+            const text = computed(() => props.title + props.desc)
+            return { text }
+          },
+        })
+    )
+    comp.render()
+    await sleep(10)
+    expect(comp.dom!.innerHTML).toBe('<div>text:标题无描述 value:1</div>')
   })
 })

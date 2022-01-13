@@ -1,13 +1,7 @@
 import type { HookType } from './constants'
-import {
-  PAGE_ON_METHODS,
-  CORE_KEY,
-  COMPONENT_LIFETIMES,
-  PAGE_LIFETIMES,
-  APP_LIFETIMES,
-} from './constants'
-import type { AppCore, ComponentInstance } from './instance'
-import { appCore, getCurrentInstance } from './instance'
+import { PAGE_ON_METHODS, CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES } from './constants'
+import type { ComponentInstance } from './instance'
+import { getCurrentInstance } from './instance'
 import { error } from './errorHandling'
 import type { Func } from './types'
 import { arrayToRecord, firstToUpper } from './util'
@@ -77,43 +71,6 @@ function createHook<T extends Func>(lifetime: AllHook, wrapFunc?: (func: T) => R
     }
   }
 }
-
-export function wrapAppHooks(): { [key in typeof APP_LIFETIMES[number]]: Func } {
-  const lifeTimes = arrayToRecord<typeof APP_LIFETIMES, Func>(APP_LIFETIMES, funcKey => {
-    return function (this: any, ...args: unknown[]) {
-      const core: AppCore = this[CORE_KEY]
-      const hooks = core.hooks[funcKey]
-      let ret: unknown = undefined
-      hooks.forEach((func: Func) => {
-        ret = func(...args)
-      })
-      return ret
-    }
-  })
-  return lifeTimes
-}
-
-function createAppHook<T extends Func>(lifetime: typeof APP_LIFETIMES[number]) {
-  return function (hook: T) {
-    const { hooks, isPending } = appCore
-    if (isPending) {
-      hooks[lifetime].push(hook)
-    } else {
-      error(new Error(`\`${lifetime}\`钩子必须在 defineApp -> setup 期间同步使用`))
-    }
-  }
-}
-
-/**
- * ====== App Lifetime  ====
- */
-
-export const onAppShow = createAppHook('onShow')
-export const onAppHide = createAppHook('onHide')
-export const onAppError = createAppHook('onError')
-export const onAppPageNotFound = createAppHook('onPageNotFound')
-export const onAppUnhandledRejection = createAppHook('onUnhandledRejection')
-export const onAppThemeChange = createAppHook('onThemeChange')
 
 /**
  * ====== Lifetime  ====

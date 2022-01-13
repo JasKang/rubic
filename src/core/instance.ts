@@ -120,14 +120,3 @@ export function createCore(instance: Instance, isPage: boolean): Core {
     },
   }
 }
-
-export type AppCore = {
-  hooks: {
-    [key in typeof APP_LIFETIMES[number]]: Func[]
-  }
-  isPending: boolean
-}
-export const appCore: AppCore = {
-  hooks: arrayToRecord(APP_LIFETIMES, () => []),
-  isPending: false,
-}

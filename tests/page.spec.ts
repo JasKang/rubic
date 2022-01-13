@@ -106,7 +106,7 @@ describe('page', () => {
   test('watch/watchEffect', async () => {
     let dummy = 0
     let tempCount = 0
-    let stopper: () => void
+    let stopper = () => {}
     const page = await renderPage({ template: '<div></div>' }, () =>
       definePage({
         setup() {
@@ -141,7 +141,7 @@ describe('page', () => {
     expect(page.data.count).toBe(1)
 
     await sleep(10)
-    stopper!()
+    stopper()
     page.instance.increment()
     await sleep(10)
     expect(dummy).toBe(1)
