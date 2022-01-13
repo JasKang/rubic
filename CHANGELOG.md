@@ -1,3 +1,10 @@
+## [0.0.2-beta.7](https://github.com/JasKang/jweapp/compare/0.0.2-beta.6...0.0.2-beta.7) (2022-01-13)
+
+
+### Features
+
+* type setup ([e2c107c](https://github.com/JasKang/jweapp/commit/e2c107c1d971e9ca8cfffb17d02e0f6a733ae40f))
+
 ## [0.0.2-beta.6](https://github.com/JasKang/jweapp/compare/0.0.2-beta.5...0.0.2-beta.6) (2022-01-13)
 
 ## [0.0.2-beta.5](https://github.com/JasKang/jweapp/compare/0.0.2-beta.4...0.0.2-beta.5) (2022-01-11)
