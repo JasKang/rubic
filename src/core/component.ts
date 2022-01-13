@@ -12,7 +12,7 @@ import { error } from './errorHandling'
 
 export type Setup<Props, IsPage> = (
   props: Props,
-  ctx: IsPage extends false ? ComponentInstance : PageInstance
+  ctx: IsPage extends false ? Expand<ComponentInstance> : Expand<PageInstance>
 ) => Record<string, any> | void
 
 export type ComponentOptions<
@@ -24,8 +24,11 @@ export type ComponentOptions<
   behaviors?: []
   externalClasses?: string[]
   relations?: {}
-  options?: WechatMiniprogram.Component.ComponentOptions
-  setup: Setup<Props, IsPage>
+  options?: Expand<WechatMiniprogram.Component.ComponentOptions>
+  setup: (
+    props: Props,
+    ctx: IsPage extends false ? Expand<ComponentInstance> : Expand<PageInstance>
+  ) => Record<string, any> | void
 }
 
 function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
