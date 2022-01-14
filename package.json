@@ -1,7 +1,7 @@
 {
-  "name": "jweapp",
+  "name": "mando",
   "version": "0.0.2-beta.7",
-  "description": "jweapp",
+  "description": "mando",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -11,17 +11,17 @@
   ],
   "author": "jaskang",
   "license": "MIT",
-  "homepage": "https://github.com/JasKang/jweapp#readme",
+  "homepage": "https://github.com/JasKang/mando#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JasKang/jweapp.git"
+    "url": "git+https://github.com/JasKang/mando.git"
   },
   "bugs": {
-    "url": "https://github.com/JasKang/jweapp/issues"
+    "url": "https://github.com/JasKang/mando/issues"
   },
   "scripts": {
     "docs:dev": "vuepress dev docs",
