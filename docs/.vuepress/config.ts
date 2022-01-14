@@ -7,6 +7,6 @@ export default defineUserConfig<DefaultThemeOptions>({
   description: 'Just playing around',
 
   themeConfig: {
-    logo: 'https://vuejs.org/images/logo.png',
+    logo: '/images/logo.svg',
   },
 })
