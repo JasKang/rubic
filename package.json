@@ -1,6 +1,6 @@
 {
   "name": "mando",
-  "version": "0.0.2-beta.7",
+  "version": "0.0.1-beta.0",
   "description": "mando",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
