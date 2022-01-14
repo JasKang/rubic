@@ -12,10 +12,10 @@ actions:
 features:
   - title: 💡 响应式
     details: 与 Vue3 一致的响应式和组合式 API
-  - title: 🔑 类型化
-    details: 基于 TypeScript 编写, 完整的类型文件
   - title: ⚡️ 轻量级
     details: 无编译依赖，没有臃肿的运行时
+  - title: 🔑 类型化
+    details: 基于 TypeScript 编写, 完整的类型文件
 
 footer: MIT Licensed | Copyright © 2022-present jaskang
 ---
