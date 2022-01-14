@@ -1,3 +1,11 @@
+## [0.0.1-beta.1](https://github.com/JasKang/dakar/compare/0.0.2-beta.7...0.0.1-beta.1) (2022-01-14)
+
+
+### Features
+
+* app 生命周期 ([89c1e9f](https://github.com/JasKang/dakar/commit/89c1e9f1919914e635ff083ef525c3e8acb77b4f))
+* rename ([f8ff97d](https://github.com/JasKang/dakar/commit/f8ff97d0f11100df4c0345a95c725dd39680a00a))
+
 ## [0.0.2-beta.7](https://github.com/JasKang/dakar/compare/0.0.2-beta.6...0.0.2-beta.7) (2022-01-13)
 
 ### Features
