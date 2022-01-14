@@ -1,3 +1,6 @@
+* chore: version (9427bea)
+* feat: rename Marci (a5bfe48)
+
 ## [0.0.1-beta.1](https://github.com/JasKang/marci/compare/0.0.2-beta.7...0.0.1-beta.1) (2022-01-14)
 
 ### Features
