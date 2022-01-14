@@ -1,7 +1,7 @@
 {
-  "name": "mando",
+  "name": "dakar",
   "version": "0.0.1-beta.0",
-  "description": "mando",
+  "description": "dakar",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -11,17 +11,17 @@
   ],
   "author": "jaskang",
   "license": "MIT",
-  "homepage": "https://github.com/JasKang/mando#readme",
+  "homepage": "https://github.com/JasKang/dakar#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JasKang/mando.git"
+    "url": "git+https://github.com/JasKang/dakar.git"
   },
   "bugs": {
-    "url": "https://github.com/JasKang/mando/issues"
+    "url": "https://github.com/JasKang/dakar/issues"
   },
   "scripts": {
     "docs:dev": "vuepress dev docs",
