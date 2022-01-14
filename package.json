@@ -1,7 +1,7 @@
 {
-  "name": "marci",
+  "name": "vessel",
   "version": "0.0.1-beta.1",
-  "description": "marci",
+  "description": "vessel",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -11,17 +11,17 @@
   ],
   "author": "jaskang",
   "license": "MIT",
-  "homepage": "https://github.com/JasKang/marci#readme",
+  "homepage": "https://github.com/JasKang/vessel#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JasKang/marci.git"
+    "url": "git+https://github.com/JasKang/vessel.git"
   },
   "bugs": {
-    "url": "https://github.com/JasKang/marci/issues"
+    "url": "https://github.com/JasKang/vessel/issues"
   },
   "scripts": {
     "docs:dev": "vuepress dev docs",
