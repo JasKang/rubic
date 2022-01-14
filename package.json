@@ -1,7 +1,7 @@
 {
-  "name": "dakar",
+  "name": "marci",
   "version": "0.0.1-beta.1",
-  "description": "dakar",
+  "description": "marci",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -11,17 +11,17 @@
   ],
   "author": "jaskang",
   "license": "MIT",
-  "homepage": "https://github.com/JasKang/dakar#readme",
+  "homepage": "https://github.com/JasKang/marci#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JasKang/dakar.git"
+    "url": "git+https://github.com/JasKang/marci.git"
   },
   "bugs": {
-    "url": "https://github.com/JasKang/dakar/issues"
+    "url": "https://github.com/JasKang/marci/issues"
   },
   "scripts": {
     "docs:dev": "vuepress dev docs",

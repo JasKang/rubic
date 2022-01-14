@@ -4,7 +4,7 @@ title: Home
 heroImage: /images/logo.svg
 actions:
   - text: 开始
-    link: /guide/getting-started.html
+    link: /guide/
     type: primary
   - text: 了解更多
     link: /guide/
