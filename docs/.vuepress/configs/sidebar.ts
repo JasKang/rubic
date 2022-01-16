@@ -3,20 +3,13 @@ import type { SidebarConfig } from '@vuepress/theme-default'
 const sidebar: SidebarConfig = {
   '/guide/': [
     {
-      text: '指南',
+      text: '基础',
       children: [
         '/guide/README.md',
-        '/guide/getting-started.md',
-        '/guide/configuration.md',
+        '/guide/installation.md',
+        '/guide/instance.md',
         '/guide/page.md',
-        '/guide/markdown.md',
-        '/guide/assets.md',
-        '/guide/i18n.md',
-        '/guide/deployment.md',
-        '/guide/theme.md',
-        '/guide/plugin.md',
-        '/guide/bundler.md',
-        '/guide/migration.md',
+        '/guide/component.md',
       ],
     },
   ],

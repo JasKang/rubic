@@ -3,9 +3,9 @@ import type { DefaultThemeOptions } from 'vuepress-vite'
 import { navbar, sidebar } from './configs'
 
 export default defineUserConfig<DefaultThemeOptions>({
-  title: 'Wetup',
+  title: 'Rubic',
   lang: 'zh-CN',
-  description: '新一代小程序开发框架',
+  description: '基于 Vue3 的小程序开发框架',
   head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/images/logo.svg' }]],
   themeConfig: {
     logo: '/images/logo.svg',

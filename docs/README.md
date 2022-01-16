@@ -10,8 +10,8 @@ actions:
     link: /guide/
     type: secondary
 features:
-  - title: 💡 响应式
-    details: 与 Vue3 一致的响应式和组合式 API
+  - title: 💡 响应性&组合式
+    details: 与 vue3 一致的响应性能力和组合式 API
   - title: ⚡️ 轻量级
     details: 无编译依赖，没有臃肿的运行时
   - title: 🔑 类型化
