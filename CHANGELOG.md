@@ -1,3 +1,12 @@
+* feat: rubic (2537b7a)
+* chore: version (2091170)
+* chore: rename (28e1fde)
+* chore: rename marci (4aa8702)
+* feat: rename (e8a6b99)
+* chore: release v0.0.1-beta.1 (46c0482)
+* chore: version (9427bea)
+* feat: rename Marci (a5bfe48)
+
 - chore: version (9427bea)
 - feat: rename rubic (a5bfe48)
 
