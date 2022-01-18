@@ -7,7 +7,7 @@ const sidebar: SidebarConfig = {
       children: [
         '/guide/README.md',
         '/guide/installation.md',
-        '/guide/instance.md',
+        '/guide/app.md',
         '/guide/page.md',
         '/guide/component.md',
       ],

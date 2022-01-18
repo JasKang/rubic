@@ -19,3 +19,36 @@ features:
 
 footer: MIT Licensed | Copyright © 2022-present jaskang
 ---
+
+### 和 Vue3 一样的开发方式
+
+<CodeGroup>
+  <CodeGroupItem title="组件:js" active>
+
+```ts
+import { defineComponent } from 'rubic'
+
+defineComponent({
+  setup() {
+    const count = ref(0)
+    const increment = () => ++count.value
+    return {
+      count,
+      increment,
+    }
+  },
+})
+```
+
+  </CodeGroupItem>
+
+  <CodeGroupItem title="组件:wxml">
+  
+```xml
+<view @bind:tap="increment">
+{{count}}
+<view>
+```
+
+  </CodeGroupItem>
+</CodeGroup>
