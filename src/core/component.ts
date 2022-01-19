@@ -120,17 +120,6 @@ function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
     pageLifetimes: wrapHooks('pageLifetimes', PAGE_LIFETIMES),
     methods: {
       ...(isPage ? wrapHooks('methods', PAGE_ON_METHODS) : {}),
-      // onLoad(query) {},
-      // onReady() {},
-      // onUnload() {},
-      // onPullDownRefresh() {},
-      // onReachBottom() {},
-      // onShareAppMessage(options): ICustomShareContent {},
-      // onShareTimeline(): ICustomTimelineContent {},
-      // onPageScroll(options) {},
-      // onTabItemTap(options) {},
-      // onResize(options) {},
-      // onAddToFavorites(options): IAddToFavoritesContent {},
     },
   }
 }
@@ -168,7 +157,7 @@ export function definePage<PropsOptions extends ComponentPropsOptions>(
 
 // defineComponent({
 //   props: {
-//     a: String,
+//     a: null,
 //     b: {
 //       type: Number,
 //     },
