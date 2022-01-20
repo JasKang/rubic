@@ -2,9 +2,9 @@ import { readonly } from '@vue/reactivity'
 import { CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES, PAGE_ON_METHODS } from './constants'
 import type { ComponentInstance, Instance, PageInstance } from './instance'
 import { createCore, setCurrentInstance } from './instance'
-import type { ComponentPropsOptions, PropsRaw } from './props'
+import type { ComponentObjectPropsOptions, ComponentPropsOptions, ExtractPropTypes } from './props'
 import { convertToProperties } from './props'
-import type { Expand } from './types'
+import type { Expand, LooseRequired, UnionToIntersection } from './types'
 import { bindingToRaw, isFunction } from './util'
 import { watchBinding, watchRender } from './bindings'
 import { wrapHooks } from './lifetimes'
@@ -15,25 +15,46 @@ export type Setup<Props, IsPage> = (
   ctx: IsPage extends false ? Expand<ComponentInstance> : Expand<PageInstance>
 ) => Record<string, any> | void
 
-export type ComponentOptions<
-  PropsOptions = ComponentPropsOptions,
-  IsPage extends boolean = false,
-  Props = PropsRaw<PropsOptions>
-> = {
-  props?: PropsOptions
+type ComponentOptionsBase<P, IsPage = false> = {
   behaviors?: []
   externalClasses?: string[]
   relations?: {}
   options?: Expand<WechatMiniprogram.Component.ComponentOptions>
   setup: (
-    props: Props,
-    ctx: IsPage extends false ? Expand<ComponentInstance> : Expand<PageInstance>
+    props: P,
+    ctx: IsPage extends true ? Expand<PageInstance> : Expand<ComponentInstance>
   ) => Record<string, any> | void
 }
 
-function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
-  componentOptions: ComponentOptions<PropsOptions, IsPage>,
+type ComponentOptionsWithArrayProps<
+  PropNames extends string = string,
+  IsPage = false,
+  Props = Readonly<{ [key in PropNames]?: any }>
+> = ComponentOptionsBase<Props, IsPage> & {
+  props: PropNames[]
+}
+
+type ComponentOptionsWithObjectProps<
+  PropsOptions = ComponentObjectPropsOptions,
+  IsPage = false,
+  Props = Readonly<Expand<ExtractPropTypes<PropsOptions>>>
+> = ComponentOptionsBase<Props, IsPage> & {
+  props: PropsOptions
+}
+
+function defineBaseComponent<PropNames extends string, IsPage = false>(
+  options: ComponentOptionsWithArrayProps<PropNames, IsPage>,
   isPage: IsPage
+): string
+function defineBaseComponent<PropsOptions extends Readonly<ComponentPropsOptions>, IsPage = false>(
+  options: ComponentOptionsWithObjectProps<PropsOptions, IsPage>,
+  isPage: IsPage
+): string
+function defineBaseComponent(
+  componentOptions: ComponentOptionsBase<Record<string, any>> & {
+    props: ComponentPropsOptions
+  },
+  isPage: boolean
 ) {
   const {
     props: propsOptions = {},
@@ -43,7 +64,8 @@ function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
     externalClasses,
     relations,
   } = componentOptions
-  const propsKeys = Object.keys(propsOptions)
+  const properties = convertToProperties(propsOptions)
+  const propsKeys = Object.keys(properties)
 
   const { detached: onDetached, ...lifetimes } = wrapHooks('lifetimes', COMPONENT_LIFETIMES)
 
@@ -59,7 +81,7 @@ function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
     for (const prop of propsKeys) {
       core.props[prop] = this.data[prop]
     }
-    const props = readonly(core.props) as PropsRaw<PropsOptions>
+    const props = readonly(core.props) as any
     ctx.$nextRender = core.nextRender
     const bindings = setup(props, ctx as any) || {}
     core.bindings = bindings
@@ -94,9 +116,8 @@ function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
       }
     }
   }
-  const properties = convertToProperties(propsOptions)
 
-  return {
+  const sourceOptions = {
     behaviors,
     externalClasses,
     relations,
@@ -122,52 +143,53 @@ function defineBaseOptions<PropsOptions, IsPage extends boolean = false>(
       ...(isPage ? wrapHooks('methods', PAGE_ON_METHODS) : {}),
     },
   }
+  return Component(sourceOptions)
 }
 
-export function defineComponent<PropsOptions extends ComponentPropsOptions>(
-  options: Expand<ComponentOptions<PropsOptions>>
-) {
-  const originOptions = defineBaseOptions(options, false)
-  return Component(originOptions)
+export function defineComponent<PropNames extends string>(
+  options: ComponentOptionsWithArrayProps<PropNames, false>
+): string
+export function defineComponent<PropsOptions extends Readonly<ComponentPropsOptions>>(
+  options: ComponentOptionsWithObjectProps<PropsOptions, false>
+): string
+export function defineComponent(options: any) {
+  return defineBaseComponent(options, false)
 }
 
-export function definePage<PropsOptions extends ComponentPropsOptions>(
-  options: Expand<ComponentOptions<PropsOptions, true>>
-) {
-  const originOptions = defineBaseOptions(options, true)
-  return Component(originOptions)
+export function definePage<PropNames extends string>(
+  options: ComponentOptionsWithArrayProps<PropNames, true>
+): string
+export function definePage<PropsOptions extends Readonly<ComponentPropsOptions>>(
+  options: ComponentOptionsWithObjectProps<PropsOptions, true>
+): string
+export function definePage(options: any) {
+  return defineBaseComponent(options, true)
 }
 
-// definePage({
-//   props: {
-//     a: String,
-//     b: {
-//       type: Number,
-//     },
-//     c: {
-//       type: [String, Number],
-//       value: 'asd',
-//     },
-//   },
-//   setup(props, ctx) {
-//     // ctx.
-//     props.c
-//   },
-// })
+definePage({
+  props: ['title', 'desc'],
+  setup(props, ctx) {
+    // ctx.
+    // ctx.
+  },
+})
 
-// defineComponent({
-//   props: {
-//     a: null,
-//     b: {
-//       type: Number,
-//     },
-//     c: {
-//       type: [String, Number],
-//       value: 'asd',
-//     },
-//   },
-//   setup(props, ctx) {
-//     // ctx.asdf
-//     props.c
-//   },
-// })
+defineComponent({
+  props: {
+    a: null,
+    b: {
+      type: Number,
+    },
+    c: {
+      type: [String, Number],
+      value: 'asd',
+    },
+  },
+  setup(props, ctx) {
+    props.b
+    props.a
+    props.c
+    // ctx.asdf
+    props.c
+  },
+})

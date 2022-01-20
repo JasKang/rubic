@@ -2,6 +2,8 @@ export type Func = (...args: any[]) => any
 
 export type Data = Record<string, unknown>
 
+export type AnyObject = Record<string, any>
+
 export type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never
 
 export type ExpandRecursively<T> = T extends object
@@ -10,11 +12,13 @@ export type ExpandRecursively<T> = T extends object
     : never
   : T
 
-export type SizeEvent = {
-  size: {
-    /** 变化后的窗口宽度，单位 px */
-    windowWidth: number
-    /** 变化后的窗口高度，单位 px */
-    windowHeight: number
-  }
-}
+export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+  k: infer I
+) => void
+  ? I
+  : never
+
+// make keys required but keep undefined values
+export type LooseRequired<T> = { [P in string & keyof T]: T[P] }
+
+export type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N
