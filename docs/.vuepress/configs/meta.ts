@@ -1,1 +1,1 @@
-export { version } from '../../../package.json'
+export { version } from '../../../packages/core/package.json'

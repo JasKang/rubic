@@ -1,4 +1,4 @@
-import type { Data, Expand, IfAny } from './types'
+import type { Data, IfAny } from './types'
 import { isPlainObject } from './util'
 
 type PropMethod<T, TConstructor = any> = [T] extends [((...args: any) => any) | undefined] // if is function with args, allowing non-required functions

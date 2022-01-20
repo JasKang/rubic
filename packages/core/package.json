@@ -25,9 +25,7 @@
   },
   "scripts": {
     "build": "tsup",
-    "prepublishOnly": "pnpm build",
-    "release:pre": "release-it --preRelease=beta",
-    "release": "release-it"
+    "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
     "@vue/reactivity": "^3.2.26",

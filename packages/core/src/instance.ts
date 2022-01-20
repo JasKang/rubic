@@ -1,13 +1,7 @@
 import type { ShallowReactive } from '@vue/reactivity'
 import { reactive, shallowReactive, EffectScope } from '@vue/reactivity'
 import type { HookType } from './constants'
-import {
-  APP_LIFETIMES,
-  CORE_KEY,
-  COMPONENT_LIFETIMES,
-  PAGE_LIFETIMES,
-  PAGE_ON_METHODS,
-} from './constants'
+import { CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES, PAGE_ON_METHODS } from './constants'
 
 import type { Data, Func } from './types'
 import { arrayToRecord, bindingToRaw } from './util'
