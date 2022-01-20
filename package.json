@@ -25,8 +25,8 @@
     "docs:build": "vuepress build docs",
     "build": "pnpm build --filter @rubic/* && pnpm run docs:build",
     "prepublishOnly": "pnpm build ",
-    "release:pre": "release-it --preRelease=beta",
-    "release": "release-it",
+    "changeset": "changeset",
+    "release": "changeset publish",
     "test": "vitest run",
     "coverage": "vitest --coverage"
   },
