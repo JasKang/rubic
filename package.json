@@ -30,7 +30,8 @@
     "prepublishOnly": "pnpm build",
     "release:pre": "release-it --preRelease=beta",
     "release": "release-it",
-    "test": "jest --coverage"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "devDependencies": {
     "@release-it/conventional-changelog": "^3.3.0",

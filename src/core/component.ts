@@ -39,7 +39,7 @@ type ComponentOptionsWithObjectProps<
   IsPage = false,
   Props = Readonly<Expand<ExtractPropTypes<PropsOptions>>>
 > = ComponentOptionsBase<Props, IsPage> & {
-  props: PropsOptions
+  props?: PropsOptions
 }
 
 function defineBaseComponent<PropNames extends string, IsPage = false>(
@@ -52,7 +52,7 @@ function defineBaseComponent<PropsOptions extends Readonly<ComponentPropsOptions
 ): string
 function defineBaseComponent(
   componentOptions: ComponentOptionsBase<Record<string, any>> & {
-    props: ComponentPropsOptions
+    props?: ComponentPropsOptions
   },
   isPage: boolean
 ) {
@@ -166,30 +166,30 @@ export function definePage(options: any) {
   return defineBaseComponent(options, true)
 }
 
-definePage({
-  props: ['title', 'desc'],
-  setup(props, ctx) {
-    // ctx.
-    // ctx.
-  },
-})
+// definePage({
+//   props: ['title', 'desc'],
+//   setup(props, ctx) {
+//     // ctx.
+//     // ctx.
+//   },
+// })
 
-defineComponent({
-  props: {
-    a: null,
-    b: {
-      type: Number,
-    },
-    c: {
-      type: [String, Number],
-      value: 'asd',
-    },
-  },
-  setup(props, ctx) {
-    props.b
-    props.a
-    props.c
-    // ctx.asdf
-    props.c
-  },
-})
+// defineComponent({
+//   props: {
+//     a: null,
+//     b: {
+//       type: Number,
+//     },
+//     c: {
+//       type: [String, Number],
+//       value: 'asd',
+//     },
+//   },
+//   setup(props, ctx) {
+//     props.b
+//     props.a
+//     props.c
+//     // ctx.asdf
+//     props.c
+//   },
+// })

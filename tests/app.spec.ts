@@ -39,7 +39,7 @@ describe('app', () => {
     const resetConsole = mockConsole()
     onAppShow(() => {})
     expect(console.error).toBeCalledWith(
-      '[Jweapp]: `[Jweapp]: onAppShow 函数必须在 createApp -> setup 期间同步使用.'
+      '[Jweapp]: onAppShow 函数必须在 createApp -> setup 期间同步使用.'
     )
     resetConsole()
   })
