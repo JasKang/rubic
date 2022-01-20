@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import { launchApp, mockConsole } from './mock'
 import { createApp, onAppShow } from '../src'
 

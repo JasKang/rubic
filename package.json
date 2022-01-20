@@ -1,14 +1,11 @@
 {
   "name": "rubic",
-  "version": "0.0.1-beta.1",
   "description": "rubic",
-  "main": "dist/index.mjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
   "miniprogram": "dist",
   "files": [
     "dist"
   ],
+  "private": true,
   "author": "jaskang",
   "license": "MIT",
   "homepage": "https://github.com/JasKang/rubic#readme",
@@ -30,21 +27,15 @@
     "prepublishOnly": "pnpm build",
     "release:pre": "release-it --preRelease=beta",
     "release": "release-it",
-    "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test": "vitest run",
+    "coverage": "vitest --coverage"
   },
   "devDependencies": {
-    "@release-it/conventional-changelog": "^3.3.0",
-    "@swc/core": "^1.2.128",
-    "@swc/jest": "^0.2.16",
     "@types/jest": "^27.4.0",
     "@types/node": "^12.20.41",
-    "@types/wechat-miniprogram": "^3.4.0",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
     "@typescript-eslint/parser": "^5.9.0",
-    "@vue/reactivity": "^3.2.26",
-    "esbuild": "^0.14.10",
-    "esbuild-jest": "^0.5.0",
+    "c8": "^7.11.0",
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.4",
@@ -52,9 +43,9 @@
     "jest": "^27.4.7",
     "miniprogram-simulate": "^1.4.3",
     "prettier": "^2.5.1",
-    "release-it": "^14.11.8",
     "tsup": "^5.11.11",
     "typescript": "^4.5.4",
+    "vitest": "^0.1.24",
     "vuepress-vite": "^2.0.0-beta.32"
   }
 }

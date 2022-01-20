@@ -20,11 +20,11 @@ export {
   onAppPageNotFound,
   onAppUnhandledRejection,
   onAppThemeChange,
-} from './core/app'
-export { defineComponent, definePage } from './core/component'
-export { getCurrentInstance, CustomPageContext, CustomComponentContext } from './core/instance'
-export { CORE_KEY } from './core/constants'
-export { watch, watchEffect } from './core/watch'
+} from './app'
+export { defineComponent, definePage } from './component'
+export { getCurrentInstance, CustomPageContext, CustomComponentContext } from './instance'
+export { CORE_KEY } from './constants'
+export { watch, watchEffect } from './watch'
 
 export {
   //
@@ -45,4 +45,4 @@ export {
   onShareAppMessage,
   onShareTimeline,
   onAddToFavorites,
-} from './core/lifetimes'
+} from './lifetimes'

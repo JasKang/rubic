@@ -1,6 +1,6 @@
+import { describe, expect, test } from 'vitest'
 import { mockConsole, renderComponent, sleep } from './mock'
 import {
-  defineComponent,
   onDetached,
   onMoved,
   onReady,
@@ -11,8 +11,9 @@ import {
   watchEffect,
   CORE_KEY,
   watch,
+  defineComponent,
 } from '../src'
-import type { Core } from '../src/core/instance'
+import type { Core } from '../src/instance'
 
 describe('component', () => {
   test('lifetimes', async () => {
@@ -48,7 +49,7 @@ describe('component', () => {
     expect(calledKeys[calledKeys.length - 1]).toEqual('onDetached')
   })
 
-  it('lifetime outside setup', () => {
+  test('lifetime outside setup', () => {
     const resetConsole = mockConsole()
     onShow(() => {})
     expect(console.error).toBeCalledWith('[Jweapp]: 当前没有实例 无法创建show钩子.')

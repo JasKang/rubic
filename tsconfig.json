@@ -1,21 +1,28 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "lib": ["esnext", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "strict": true,
-    "skipLibCheck": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "moduleResolution": "node",
     "esModuleInterop": true,
-    "allowJs": true,
+    "strict": true,
     "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "skipDefaultLibCheck": true,
+    "noUnusedLocals": true,
+    "allowJs": true,
     "importsNotUsedAsValues": "preserve",
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["node", "jest", "wechat-miniprogram"],
     "sourceMap": true,
-    "rootDir": "."
+    "paths": {
+      "@rubic/core": ["./packages/core/index.ts"]
+    },
+    "types": ["node", "vitest", "wechat-miniprogram"],
+    "rootDir": ".",
+    "baseUrl": "."
   },
-  "include": ["env.d.ts", "src/**/*.ts", "tests/**/*.ts", "tests-dts/**/*.ts", "*.js"]
+  "exclude": ["**/dist/**", "coverage"]
 }

@@ -1,0 +1,36 @@
+{
+  "name": "@rubic/core",
+  "version": "0.0.1-beta.0",
+  "description": "rubic",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "miniprogram": "dist",
+  "files": [
+    "dist"
+  ],
+  "author": "jaskang",
+  "license": "MIT",
+  "homepage": "https://github.com/JasKang/rubic#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JasKang/rubic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JasKang/rubic/issues"
+  },
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "pnpm build",
+    "release:pre": "release-it --preRelease=beta",
+    "release": "release-it"
+  },
+  "devDependencies": {
+    "@vue/reactivity": "^3.2.26",
+    "@types/wechat-miniprogram": "^3.4.0"
+  }
+}

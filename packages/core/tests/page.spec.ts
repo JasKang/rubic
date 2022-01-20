@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import { mockConsole, renderPage, sleep } from './mock'
 import {
   definePage,
@@ -13,7 +14,7 @@ import {
   CORE_KEY,
   watch,
 } from '../src'
-import type { Core } from '../src/core/instance'
+import type { Core } from '../src/instance'
 
 describe('page', () => {
   test('lifetimes', async () => {
