@@ -10,17 +10,13 @@ import { watchBinding, watchRender } from './bindings'
 import { wrapHooks } from './lifetimes'
 import { error } from './errorHandling'
 
-export type Setup<Props, IsPage> = (
-  props: Props,
-  ctx: IsPage extends false ? Expand<ComponentInstance> : Expand<PageInstance>
-) => Record<string, any> | void
-
 type ComponentOptionsBase<P, IsPage = false> = {
   behaviors?: []
   externalClasses?: string[]
   relations?: {}
   options?: Expand<WechatMiniprogram.Component.ComponentOptions>
   setup: (
+    this: void,
     props: P,
     ctx: IsPage extends true ? Expand<PageInstance> : Expand<ComponentInstance>
   ) => Record<string, any> | void

@@ -1,5 +1,9 @@
 # 组件
 
+::: tip
+文档中带 Tab 的代码块皆可切换查看对应代码。如果文档包含对应 wxml 代码，可以点击 tab 查看。
+:::
+
 ## 声明组件
 
 在组件 js 文件中使用 `defineComponent` 函数定义页面, `setup` 函数对应小程序组件 `attach` 回调
@@ -119,7 +123,7 @@ defineComponent({
 
 目前发现 context.getOpenerEventChannel 方法在 attach 阶段并没有生成。这意味着你应该避免对它进行解构使用，并始终以 context.getOpenerEventChannel 的方式调用。
 
-## 生命周期组合式 API
+## 生命周期 API
 
 Rubic 导出了一系列组合式 API 来注册生命周期钩子。它们的命名和 Component 原始生命周期类似，加上 `on` 为前缀
 即：`lifetimes.ready` -> `onReady`，

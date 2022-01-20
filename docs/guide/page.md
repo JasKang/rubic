@@ -48,7 +48,7 @@ definePage({
 </CodeGroup>
 
 ::: warning 注意：关于 setup 调用时机
-为了统一 setup 执行顺序，`definePage` 底层 [使用 Component 构造器构造页面](https://developers.weixin.qq.com/miniprogram/dev/framework/custom-component/component.html#%E4%BD%BF%E7%94%A8-Component-%E6%9E%84%E9%80%A0%E5%99%A8%E6%9E%84%E9%80%A0%E9%A1%B5%E9%9D%A2)
+为了统一页面和组件的 setup 执行顺序，definePage 底层使用了 Component 来实现，具体详情可查看小程序官方文档: [使用 Component 构造器构造页面](https://developers.weixin.qq.com/miniprogram/dev/framework/custom-component/component.html#%E4%BD%BF%E7%94%A8-Component-%E6%9E%84%E9%80%A0%E5%99%A8%E6%9E%84%E9%80%A0%E9%A1%B5%E9%9D%A2)
 :::
 
 ## query 参数
@@ -75,9 +75,23 @@ definePage({
 })
 ```
 
+props 支持字符串数组，在定义页面参数时可以更简洁
+
+```ts
+// pages/test/index.js
+import { definePage } from 'rubic'
+
+definePage({
+  props:['paramA', 'paramB'],
+  setup(query, context) {
+    ...
+  },
+})
+```
+
 ##### 未知页面参数
 
-如果有无法确定有哪些页面参数的情况，可以使用 onLoad 函数回调中的参数来代替
+如果有无法确定有哪些页面参数的情况，可以使用 onLoad 注册函数的参数来代替
 
 如访问： pages/test/index?paramA=123&paramB=xyz
 
@@ -100,7 +114,7 @@ definePage({
 })
 ```
 
-## 生命周期组合式 API
+## 生命周期 API
 
 Rubic 导出了一系列组合式 API 来注册生命周期钩子。它们的命名和 Page 原始生命周期一致
 
