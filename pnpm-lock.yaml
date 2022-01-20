@@ -4,7 +4,6 @@ importers:
 
   .:
     specifiers:
-      '@changesets/changelog-github': ^0.4.2
       '@changesets/cli': ^2.19.0
       '@types/jest': ^27.4.0
       '@types/node': ^12.20.41
@@ -23,7 +22,6 @@ importers:
       vitest: ^0.1.24
       vuepress-vite: ^2.0.0-beta.32
     devDependencies:
-      '@changesets/changelog-github': 0.4.2
       '@changesets/cli': 2.19.0
       '@types/jest': 27.4.0
       '@types/node': 12.20.41
@@ -411,16 +409,6 @@ packages:
       semver: 5.7.1
     dev: true
 
-  /@changesets/changelog-github/0.4.2:
-    resolution: {integrity: sha512-qq8lJcq91ki7UT0fIfIcn5Yy7GJj19TmkLmGZ24/wEfxcD/nHHoTNRoi6nPt+Htf7qEudKxXLzQLi41B7Mt2vg==, tarball: '@changesets/changelog-github/download/@changesets/changelog-github-0.4.2.tgz'}
-    dependencies:
-      '@changesets/get-github-info': 0.5.0
-      '@changesets/types': 4.0.2
-      dotenv: 8.6.0
-    transitivePeerDependencies:
-      - encoding
-    dev: true
-
   /@changesets/cli/2.19.0:
     resolution: {integrity: sha512-AqtWiarNSUD42pv7ldTAFMU7pa/39t78VDAWFy78RgUJQyFmXktOG8fzjMhksJ+G5+pWLVSXaLSj6cCbpeWivg==, tarball: '@changesets/cli/download/@changesets/cli-2.19.0.tgz'}
     hasBin: true
@@ -484,15 +472,6 @@ packages:
       chalk: 2.4.2
       fs-extra: 7.0.1
       semver: 5.7.1
-    dev: true
-
-  /@changesets/get-github-info/0.5.0:
-    resolution: {integrity: sha1-uRzrLYLt73iuFZjqn8M1oBIlApU=, tarball: '@changesets/get-github-info/download/@changesets/get-github-info-0.5.0.tgz'}
-    dependencies:
-      dataloader: 1.4.0
-      node-fetch: 2.6.7
-    transitivePeerDependencies:
-      - encoding
     dev: true
 
   /@changesets/get-release-plan/3.0.4:
@@ -2207,10 +2186,6 @@ packages:
       whatwg-url: 8.7.0
     dev: true
 
-  /dataloader/1.4.0:
-    resolution: {integrity: sha1-vKEdhn9dPxue2fc3vRWXDGXf9cg=, tarball: dataloader/download/dataloader-1.4.0.tgz}
-    dev: true
-
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==, tarball: debug/download/debug-2.6.9.tgz}
     dependencies:
@@ -2331,11 +2306,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       webidl-conversions: 5.0.0
-    dev: true
-
-  /dotenv/8.6.0:
-    resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==, tarball: dotenv/download/dotenv-8.6.0.tgz}
-    engines: {node: '>=10'}
     dev: true
 
   /electron-to-chromium/1.4.40:
@@ -4665,18 +4635,6 @@ packages:
     resolution: {integrity: sha1-tKr7k+OustgXTKU88WOrfXMIMF8=, tarball: neo-async/download/neo-async-2.6.2.tgz}
     dev: true
 
-  /node-fetch/2.6.7:
-    resolution: {integrity: sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==, tarball: node-fetch/download/node-fetch-2.6.7.tgz}
-    engines: {node: 4.x || >=6.0.0}
-    peerDependencies:
-      encoding: ^0.1.0
-    peerDependenciesMeta:
-      encoding:
-        optional: true
-    dependencies:
-      whatwg-url: 5.0.0
-    dev: true
-
   /node-int64/0.4.0:
     resolution: {integrity: sha1-h6kGXNs1XTGC2PlM4RGIuCXGijs=, tarball: node-int64/download/node-int64-0.4.0.tgz}
     dev: true
@@ -5709,10 +5667,6 @@ packages:
       universalify: 0.1.2
     dev: true
 
-  /tr46/0.0.3:
-    resolution: {integrity: sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=, tarball: tr46/download/tr46-0.0.3.tgz}
-    dev: true
-
   /tr46/2.1.0:
     resolution: {integrity: sha1-+oeqgcpdWUHajL8fm3SdyWmk4kA=, tarball: tr46/download/tr46-2.1.0.tgz}
     engines: {node: '>=8'}
@@ -6058,10 +6012,6 @@ packages:
       defaults: 1.0.3
     dev: true
 
-  /webidl-conversions/3.0.1:
-    resolution: {integrity: sha1-JFNCdeKnvGvnvIZhHMFq4KVlSHE=, tarball: webidl-conversions/download/webidl-conversions-3.0.1.tgz}
-    dev: true
-
   /webidl-conversions/5.0.0:
     resolution: {integrity: sha1-rlnIoAsSFUOirMZcBDT1ew/BGv8=, tarball: webidl-conversions/download/webidl-conversions-5.0.0.tgz}
     engines: {node: '>=8'}
@@ -6080,13 +6030,6 @@ packages:
 
   /whatwg-mimetype/2.3.0:
     resolution: {integrity: sha1-PUseAxLSB5h5+Cav8Y2+7KWWD78=, tarball: whatwg-mimetype/download/whatwg-mimetype-2.3.0.tgz}
-    dev: true
-
-  /whatwg-url/5.0.0:
-    resolution: {integrity: sha1-lmRU6HZUYuN2RNNib2dCzotwll0=, tarball: whatwg-url/download/whatwg-url-5.0.0.tgz}
-    dependencies:
-      tr46: 0.0.3
-      webidl-conversions: 3.0.1
     dev: true
 
   /whatwg-url/8.7.0:
