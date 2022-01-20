@@ -4,7 +4,7 @@ import type { ComponentInstance, Instance, PageInstance } from './instance'
 import { createCore, setCurrentInstance } from './instance'
 import type { ComponentObjectPropsOptions, ComponentPropsOptions, ExtractPropTypes } from './props'
 import { convertToProperties } from './props'
-import type { Expand, LooseRequired, UnionToIntersection } from './types'
+import type { Expand } from './types'
 import { bindingToRaw, isFunction } from './util'
 import { watchBinding, watchRender } from './bindings'
 import { wrapHooks } from './lifetimes'
@@ -26,6 +26,13 @@ type ComponentOptionsBase<P, IsPage = false> = {
   ) => Record<string, any> | void
 }
 
+type ComponentOptionsWithoutProps<Props = {}, IsPage = false> = ComponentOptionsBase<
+  Props,
+  IsPage
+> & {
+  props?: undefined
+}
+
 type ComponentOptionsWithArrayProps<
   PropNames extends string = string,
   IsPage = false,
@@ -39,9 +46,13 @@ type ComponentOptionsWithObjectProps<
   IsPage = false,
   Props = Readonly<Expand<ExtractPropTypes<PropsOptions>>>
 > = ComponentOptionsBase<Props, IsPage> & {
-  props?: PropsOptions
+  props: PropsOptions
 }
 
+function defineBaseComponent<Props = {}, IsPage = false>(
+  options: ComponentOptionsWithoutProps<Props, IsPage>,
+  isPage: IsPage
+): string
 function defineBaseComponent<PropNames extends string, IsPage = false>(
   options: ComponentOptionsWithArrayProps<PropNames, IsPage>,
   isPage: IsPage
@@ -146,6 +157,9 @@ function defineBaseComponent(
   return Component(sourceOptions)
 }
 
+export function defineComponent<Props = {}>(
+  options: ComponentOptionsWithoutProps<Props, false>
+): string
 export function defineComponent<PropNames extends string>(
   options: ComponentOptionsWithArrayProps<PropNames, false>
 ): string
@@ -156,6 +170,7 @@ export function defineComponent(options: any) {
   return defineBaseComponent(options, false)
 }
 
+export function definePage<Props = {}>(options: ComponentOptionsWithoutProps<Props, true>): string
 export function definePage<PropNames extends string>(
   options: ComponentOptionsWithArrayProps<PropNames, true>
 ): string
@@ -166,6 +181,12 @@ export function definePage(options: any) {
   return defineBaseComponent(options, true)
 }
 
+// definePage({
+//   setup(props, ctx) {
+//     // ctx.
+//     // ctx.
+//   },
+// })
 // definePage({
 //   props: ['title', 'desc'],
 //   setup(props, ctx) {
