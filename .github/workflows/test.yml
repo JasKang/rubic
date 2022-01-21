@@ -20,10 +20,16 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14.x
-          cache: 'pnpm'
 
-      - name: Setup Pnpm
-        uses: pnpm/action-setup@v2.0.1
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+
+      - uses: pnpm/action-setup@v2
         with:
           version: 6.24.x
           run_install: true
