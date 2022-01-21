@@ -19,6 +19,10 @@ const navbar: NavbarConfig = [
       },
     ],
   },
+  {
+    text: 'Github',
+    link: 'https://github.com/JasKang/rubic',
+  },
 ]
 
 export default navbar

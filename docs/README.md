@@ -6,8 +6,8 @@ actions:
   - text: 开始
     link: /guide/
     type: primary
-  - text: 了解更多
-    link: /guide/
+  - text: Github
+    link: https://github.com/JasKang/rubic
     type: secondary
 features:
   - title: 💡 响应性&组合式
