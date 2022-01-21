@@ -29,6 +29,7 @@
     "build": "tsup",
     "prepublishOnly": "pnpm build",
     "release": "release-it",
+    "release:patch": "release-it patch",
     "test": "vitest run",
     "coverage": "vitest --coverage"
   },
