@@ -67,10 +67,10 @@
     "*": [
       "prettier --write --ignore-unknown"
     ],
-    "packages/*/{src,types}/**/*.ts": [
+    "src/**/*.ts": [
       "eslint --ext .ts"
     ],
-    "packages/**/*.d.ts": [
+    "**/*.d.ts": [
       "eslint --ext .ts"
     ]
   },

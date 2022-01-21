@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   resolve: {
     alias: {
-      rubic: resolve(__dirname, 'packages/rubic/index.ts'),
+      rubic: resolve(__dirname, './src/index.ts'),
     },
   },
   define: {
@@ -17,7 +17,7 @@ export default defineConfig({
     watch: false,
     setupFiles: ['vitest.setup.ts'],
     coverage: {
-      include: ['packages/*/src/**/*.ts'],
+      include: ['src/**/*.ts'],
       reporter: ['lcov', 'text'],
     },
   },

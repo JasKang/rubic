@@ -1,1 +1,1 @@
-export { version } from '../../../packages/rubic/package.json'
+export { version } from '../../../package.json'
