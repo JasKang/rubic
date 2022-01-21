@@ -25,15 +25,11 @@
     "docs:build": "vuepress build docs",
     "build": "pnpm run build --filter {packages}...",
     "changelog": "pnpm run changelog --filter {packages}...",
-    "prepublishOnly": "pnpm run build",
-    "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "pnpm run build && changeset publish",
+    "release": "pnpm run release --filter {packages}...",
     "test": "vitest run",
     "coverage": "vitest --coverage"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.19.0",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.4.0",
     "@types/node": "^12.20.41",
