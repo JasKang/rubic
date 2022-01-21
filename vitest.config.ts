@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   resolve: {
     alias: {
-      '@rubic/core': resolve(__dirname, 'packages/core/index.ts'),
+      rubic: resolve(__dirname, 'packages/rubic/index.ts'),
     },
   },
   define: {

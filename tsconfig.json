@@ -18,7 +18,7 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "paths": {
-      "@rubic/core": ["./packages/core/index.ts"]
+      "rubic": ["./packages/rubic/index.ts"]
     },
     "types": ["node", "vitest", "wechat-miniprogram"],
     "rootDir": ".",
