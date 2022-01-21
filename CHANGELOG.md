@@ -1,3 +1,9 @@
+## [0.0.3-beta.1](https://github.com/JasKang/rubic/compare/v0.0.3-beta.0...v0.0.3-beta.1) (2022-01-21)
+
+### Bug Fixes
+
+- npm tag latest ([774be80](https://github.com/JasKang/rubic/commit/774be8033193a55df8745614d2a6338e6430b094))
+
 ## [0.0.3-beta.0](https://github.com/JasKang/rubic/compare/v0.0.2...v0.0.3-beta.0) (2022-01-21)
 
 ## [0.0.2](https://github.com/JasKang/rubic/compare/v0.0.2-beta.9...v0.0.2) (2022-01-21)
