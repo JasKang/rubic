@@ -25,7 +25,9 @@
   },
   "scripts": {
     "build": "tsup",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "pnpm build",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s --commit-path . --lerna-package core",
+    "release": "esno ../../scripts/release.ts"
   },
   "devDependencies": {
     "@vue/reactivity": "^3.2.26",
