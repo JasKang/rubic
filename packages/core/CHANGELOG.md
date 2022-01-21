@@ -1,5 +1,11 @@
 # @rubic/core
 
+## 0.0.2-beta.5
+
+### Patch Changes
+
+- asdfsa test
+
 ## 0.0.2
 
 ### Patch Changes

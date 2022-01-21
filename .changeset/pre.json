@@ -1,0 +1,10 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "rubic": "0.0.2-beta.4"
+  },
+  "changesets": [
+    "small-cameras-speak"
+  ]
+}
