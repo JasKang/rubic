@@ -2,9 +2,7 @@
   "mode": "pre",
   "tag": "beta",
   "initialVersions": {
-    "@rubic/core": "0.0.1-beta.0"
+    "@rubic/core": "0.0.1"
   },
-  "changesets": [
-    "real-experts-deny"
-  ]
+  "changesets": []
 }
