@@ -18,7 +18,7 @@ export default defineConfig({
     setupFiles: ['vitest.setup.ts'],
     coverage: {
       include: ['src/**/*.ts'],
-      reporter: ['lcov'],
+      reporter: process.env.CI ? 'lcov' : 'text',
     },
   },
 })
