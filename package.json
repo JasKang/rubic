@@ -20,6 +20,9 @@
   "bugs": {
     "url": "https://github.com/JasKang/rubic/issues"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",

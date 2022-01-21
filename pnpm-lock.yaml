@@ -62,7 +62,7 @@ importers:
       vitest: 0.1.24_c8@7.11.0
       vuepress-vite: 2.0.0-beta.32
 
-  packages/core:
+  packages/rubic:
     specifiers:
       '@types/wechat-miniprogram': ^3.4.0
       '@vue/reactivity': ^3.2.26
