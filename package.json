@@ -23,11 +23,11 @@
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "build": "pnpm build --filter @rubic/*",
-    "prepublishOnly": "pnpm build ",
+    "build": "pnpm run build --filter @rubic/*",
+    "prepublishOnly": "pnpm run build",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "yarn build && changeset publish",
+    "release": "pnpm run build && changeset publish",
     "test": "vitest run",
     "coverage": "vitest --coverage"
   },
