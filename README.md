@@ -3,6 +3,8 @@
     <img width="180" src="https://rubic.vercel.app/images/logo.svg" alt="Rubic logo">
   </a>
 </p>
+
+<h1 align="center">Rubic</h1>
 <br/>
 <p align="center">
   <a href="https://npmjs.com/package/rubic"><img src="https://img.shields.io/npm/v/rubic.svg" alt="npm package"></a>
@@ -11,7 +13,11 @@
 </p>
 <br/>
 
-# Rubic ⚡
+<p align="center">
+  <b>基于 Vue3 的小程序开发框架</b>
+</p>
+
+# 特性
 
 - 响应性：基于 @vue/reactivity 的响应式能力
 - 组合式：与 vue3 一致的 Composition API
