@@ -15,7 +15,7 @@ const navbar: NavbarConfig = [
     children: [
       {
         text: '更新日志',
-        link: 'https://github.com/vuepress/vuepress-next/blob/main/CHANGELOG.md',
+        link: 'https://github.com/JasKang/rubic/blob/main/CHANGELOG.md',
       },
     ],
   },
