@@ -4,6 +4,7 @@ module.exports = {
   },
   npm: {
     skipChecks: true,
+    tag: 'latest',
   },
   hooks: {
     'before:init': ['pnpm test'],
