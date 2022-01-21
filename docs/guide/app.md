@@ -74,12 +74,12 @@ import {
 
 #### 生命周期对应关系
 
-| 原生小程序                  | 组合式 API              |
-| --------------------------- | ----------------------- |
-| App -> onLaunch             | createApp -> setup      |
-| App -> onShow               | onAppShow               |
-| App -> onHide               | onAppHide               |
-| App -> onError              | onAppError              |
-| App -> onPageNotFound       | onAppPageNotFound       |
-| App -> onUnhandledRejection | onAppUnhandledRejection |
-| App -> onThemeChange        | onAppThemeChange        |
+| 组合式 API              | 原生小程序                  |
+| ----------------------- | --------------------------- |
+| setup                   | App -> onLaunch             |
+| onAppShow               | App -> onShow               |
+| onAppHide               | App -> onHide               |
+| onAppError              | App -> onError              |
+| onAppPageNotFound       | App -> onPageNotFound       |
+| onAppUnhandledRejection | App -> onUnhandledRejection |
+| onAppThemeChange        | App -> onThemeChange        |
