@@ -1,11 +1,14 @@
 {
   "name": "rubic",
+  "version": "0.0.2-beta.9",
   "description": "rubic",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "miniprogram": "dist",
   "files": [
     "dist"
   ],
-  "private": true,
   "author": "jaskang",
   "license": "MIT",
   "homepage": "https://github.com/JasKang/rubic#readme",
@@ -20,34 +23,28 @@
   "bugs": {
     "url": "https://github.com/JasKang/rubic/issues"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "build": "pnpm run build --filter {packages}...",
-    "changelog": "pnpm run changelog --filter {packages}...",
-    "release": "pnpm run release --filter {packages}...",
+    "build": "tsup",
+    "prepublishOnly": "pnpm build",
+    "release": "release-it",
     "test": "vitest run",
     "coverage": "vitest --coverage"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.13",
+    "@release-it/conventional-changelog": "^4.1.0",
     "@types/jest": "^27.4.0",
     "@types/node": "^12.20.41",
-    "@types/prompts": "^2.0.14",
-    "@types/semver": "^7.3.9",
+    "@types/wechat-miniprogram": "^3.4.0",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
     "@typescript-eslint/parser": "^5.9.0",
+    "@vue/reactivity": "^3.2.26",
     "c8": "^7.11.0",
-    "conventional-changelog-cli": "^2.2.2",
     "eslint": "^8.6.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.4",
     "esno": "^0.14.0",
-    "execa": "^6.0.0",
-    "fs-extra": "^10.0.0",
     "j-component": "^1.4.5",
     "jest": "^27.4.7",
     "lint-staged": "^12.2.2",
@@ -55,8 +52,7 @@
     "miniprogram-simulate": "^1.4.3",
     "picocolors": "^1.0.0",
     "prettier": "^2.5.1",
-    "prompts": "^2.4.2",
-    "semver": "^7.3.5",
+    "release-it": "^14.12.3",
     "simple-git-hooks": "^2.7.0",
     "tsup": "^5.11.11",
     "typescript": "^4.5.4",
@@ -77,6 +73,13 @@
     "packages/**/*.d.ts": [
       "eslint --ext .ts"
     ]
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "webpack"
+      ]
+    }
   },
   "packageManager": "pnpm@6.24.4"
 }
