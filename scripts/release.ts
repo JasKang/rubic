@@ -81,6 +81,7 @@ async function main(): Promise<void> {
     const { tagBeta }: { tagBeta: boolean } = await prompts({
       type: 'confirm',
       name: 'tagBeta',
+      initial: true,
       message: `Publish under dist-tag "beta"?`,
     })
 
@@ -90,6 +91,7 @@ async function main(): Promise<void> {
   const { yes }: { yes: boolean } = await prompts({
     type: 'confirm',
     name: 'yes',
+    initial: true,
     message: `Releasing ${tag}. Confirm?`,
   })
 
@@ -149,9 +151,10 @@ async function publishPackage(version: string, runIfNotDry: RunFn | DryRunFn): P
     '--access',
     'public',
   ]
-  if (args.tag) {
-    publicArgs.push(`--tag`, args.tag)
-  }
+  // TODO: 这样会导致 beta 不是 latest，第一版之后需要恢复
+  // if (args.tag) {
+  //   publicArgs.push(`--tag`, args.tag)
+  // }
   try {
     // important: we still use Yarn 1 to publish since we rely on its specific
     // behavior

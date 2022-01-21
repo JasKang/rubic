@@ -8,6 +8,7 @@ importers:
       '@types/jest': ^27.4.0
       '@types/node': ^12.20.41
       '@types/prompts': ^2.0.14
+      '@types/semver': ^7.3.9
       '@typescript-eslint/eslint-plugin': ^5.9.0
       '@typescript-eslint/parser': ^5.9.0
       c8: ^7.11.0
@@ -37,6 +38,7 @@ importers:
       '@types/jest': 27.4.0
       '@types/node': 12.20.41
       '@types/prompts': 2.0.14
+      '@types/semver': 7.3.9
       '@typescript-eslint/eslint-plugin': 5.9.1_b7b2e42b32ee097737cd3e626b10847b
       '@typescript-eslint/parser': 5.9.1_eslint@8.6.0+typescript@4.5.4
       c8: 7.11.0
@@ -808,6 +810,10 @@ packages:
     resolution: {integrity: sha1-EMuImYRLsHccq+V8G+yqrKmjtSE=, tarball: '@types/prompts/download/@types/prompts-2.0.14.tgz'}
     dependencies:
       '@types/node': 12.20.41
+    dev: true
+
+  /@types/semver/7.3.9:
+    resolution: {integrity: sha1-FSxsIKdojDC5Z+wYQdMazlaYY/w=, tarball: '@types/semver/download/@types/semver-7.3.9.tgz'}
     dev: true
 
   /@types/stack-utils/2.0.1:
