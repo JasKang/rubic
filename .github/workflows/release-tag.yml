@@ -1,3 +1,5 @@
+name: release-tag
+
 on:
   push:
     tags:
