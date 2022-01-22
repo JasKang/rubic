@@ -8,9 +8,6 @@
 
 在页面 js 文件中使用 `definePage` 函数定义页面, `setup` 函数对应原生小程序 `attach` 回调
 
-<CodeGroup>
-  <CodeGroupItem title="page.js" active>
-
 ```ts
 import { definePage } from 'rubic'
 
@@ -34,18 +31,11 @@ definePage({
 })
 ```
 
-  </CodeGroupItem>
-
-  <CodeGroupItem title="page.wxml">
-
 ```xml
 <button bindtap="increment">
   Count is: {{ count }}, double is: {{ double }}
 </button>
 ```
-
-  </CodeGroupItem>
-</CodeGroup>
 
 ::: warning 注意：关于 setup 调用时机
 为了统一页面和组件的 setup 执行顺序，definePage 底层使用了 Component 来实现，具体详情可查看小程序官方文档: [使用 Component 构造器构造页面](https://developers.weixin.qq.com/miniprogram/dev/framework/custom-component/component.html#%E4%BD%BF%E7%94%A8-Component-%E6%9E%84%E9%80%A0%E5%99%A8%E6%9E%84%E9%80%A0%E9%A1%B5%E9%9D%A2)

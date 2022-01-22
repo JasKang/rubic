@@ -2,7 +2,7 @@
 
 ## 创建小程序实例
 
-每个小程序都是通过用 `createApp` 函数创建一个新的小程序实例开始的：
+每个小程序都是通过用 `createApp` 函数创建一个新的 小程序实例：
 
 ```ts
 import { createApp } from 'rubic'
@@ -28,6 +28,8 @@ createApp({
   },
 })
 ```
+
+## 应用配置
 
 ## 生命周期组合式 API
 

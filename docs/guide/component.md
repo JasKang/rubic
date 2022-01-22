@@ -1,15 +1,8 @@
 # 组件
 
-::: tip
-文档中带 Tab 的代码块皆可切换查看对应代码。如果文档包含对应 wxml 代码，可以点击 tab 查看。
-:::
-
 ## 声明组件
 
 在组件 js 文件中使用 `defineComponent` 函数定义页面, `setup` 函数对应小程序组件 `attach` 回调
-
-<CodeGroup>
-  <CodeGroupItem title="component.js" active>
 
 ```ts
 import { defineComponent } from 'rubic'
@@ -30,18 +23,11 @@ defineComponent({
 })
 ```
 
-  </CodeGroupItem>
-
-  <CodeGroupItem title="component.wxml">
-
 ```xml
 <button bindtap="increment">
   Count is: {{ count }}, double is: {{ double }}
 </button>
 ```
-
-  </CodeGroupItem>
-</CodeGroup>
 
 ## Props
 
