@@ -2,6 +2,7 @@
 home: true
 title: Home
 heroImage: /images/logo.svg
+# externalIcon: false
 actions:
   - text: 开始
     link: /guide/

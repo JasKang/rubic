@@ -3,7 +3,7 @@ import type { SidebarConfig } from '@vuepress/theme-default'
 const sidebar: SidebarConfig = {
   '/guide/': [
     {
-      text: '基础',
+      text: '指南',
       children: [
         '/guide/README.md',
         '/guide/installation.md',
@@ -17,8 +17,8 @@ const sidebar: SidebarConfig = {
   ],
   '/api/': [
     {
-      text: '深入',
-      children: ['/advanced/architecture.md', '/advanced/plugin.md', '/advanced/theme.md'],
+      text: 'API',
+      link: '/api/README.md',
     },
   ],
 }
