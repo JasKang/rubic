@@ -5,7 +5,7 @@ import { createCore, setCurrentInstance } from './instance'
 import type { ComponentObjectPropsOptions, ComponentPropsOptions, ExtractPropTypes } from './props'
 import { convertToProperties } from './props'
 import type { Expand } from './types'
-import { bindingToRaw, isFunction } from './util'
+import { bindingToData, isFunction } from './util'
 import { watchBinding, watchRender } from './bindings'
 import { wrapHooks } from './lifetimes'
 import { error } from './errorHandling'
@@ -101,7 +101,7 @@ function defineBaseComponent(
           return
         }
         try {
-          this.setData({ [key]: bindingToRaw(value, key) })
+          this.setData({ [key]: bindingToData(value, key) })
         } catch (err) {
           error(err as Error, this)
         }

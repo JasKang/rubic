@@ -9,7 +9,7 @@ import { createApp } from 'rubic'
 
 createApp({
   setup() {
-    /* 选项 */
+    /* ... */
   },
 })
 ```
@@ -29,7 +29,7 @@ createApp({
 })
 ```
 
-## 应用配置
+## setup 函数
 
 ## 生命周期组合式 API
 

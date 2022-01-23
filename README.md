@@ -12,7 +12,6 @@
   <a href='https://coveralls.io/github/JasKang/rubic'><img src='https://coveralls.io/repos/github/JasKang/rubic/badge.svg' alt='Coverage Status' /></a>
 
 </p>
-<br/>
 
 <p align="center">
   <b>基于 Vue3 的小程序开发框架</b>
@@ -29,7 +28,7 @@
 
 | Package                        | Version (click for changelogs)                                                                           |
 | ------------------------------ | :------------------------------------------------------------------------------------------------------- |
-| [rubic](packages/core)         | [![rubic version](https://img.shields.io/npm/v/rubic.svg?label=%20)](packages/core/CHANGELOG.md)         |
+| [rubic](packages/core)         | [![rubic version](https://img.shields.io/npm/v/rubic.svg?label=%20)](CHANGELOG.md)                       |
 | [@rubic/hooks](packages/hooks) | [![hooks version](https://img.shields.io/npm/v/@rubic/hooks.svg?label=%20)](packages/hooks/CHANGELOG.md) |
 |                                |
 

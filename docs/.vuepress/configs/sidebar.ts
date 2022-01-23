@@ -11,6 +11,7 @@ const sidebar: SidebarConfig = {
         '/guide/component.md',
         '/guide/page.md',
         '/guide/reactive.md',
+        '/guide/composition.md',
       ],
     },
   ],

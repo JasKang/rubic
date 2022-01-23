@@ -4,7 +4,7 @@ import type { HookType } from './constants'
 import { CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES, PAGE_ON_METHODS } from './constants'
 
 import type { Data, Func } from './types'
-import { arrayToRecord, bindingToRaw } from './util'
+import { arrayToRecord, bindingToData } from './util'
 
 export type NextRender = (fn: () => void) => void
 
@@ -92,7 +92,7 @@ export function createCore(instance: Instance, isPage: boolean): Core {
           if (keys.length > 0) {
             const patchObj: Record<string, any> = {}
             for (const key of keys) {
-              patchObj[key] = bindingToRaw(instance[CORE_KEY].bindings[key], key)
+              patchObj[key] = bindingToData(instance[CORE_KEY].bindings[key], key)
             }
             instance.setData(patchObj, () => {
               const { effects } = instance[CORE_KEY].render

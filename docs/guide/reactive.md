@@ -1,4 +1,4 @@
-# 响应式基础
+# 响应性
 
 ## 声明响应式状态
 
@@ -33,3 +33,5 @@ export default {
 ```xml
 <div>{{ state.count }}</div>
 ```
+
+## ref() 定义响应式变量

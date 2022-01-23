@@ -51,8 +51,8 @@ definePage({
     },
   },
   setup(props, context) {
-    console.log('propA ', query.propA)
-    console.log('propB ', query.propB)
+    console.log('propA ', props.propA)
+    console.log('propB ', props.propB)
   },
 })
 ```

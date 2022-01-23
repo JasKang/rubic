@@ -99,7 +99,7 @@ describe('page', () => {
     )
     await sleep(10)
     expect(console.error).toBeCalledWith(
-      '[Jweapp]: setup 含有不支持类型 sym:[object Symbol] 类型. | instance: id'
+      `[Jweapp]: 错误的数据类型 sym:[object Symbol], 小程序 data 仅支持 string | number | boolean | object | array 类型. | instance: id`
     )
     resetConsole()
   })
