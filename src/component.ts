@@ -134,7 +134,7 @@ function defineBaseComponent(
       core.props[prop] = this.data[prop]
     }
     const props = readonly(core.props) as any
-    ctx.$nextRender = core.nextRender
+    ctx.nextTick = core.nextTick
     const bindings = setup(props, ctx as any) || {}
     core.bindings = bindings
     if (bindings) {
