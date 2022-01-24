@@ -7,7 +7,7 @@ module.exports = {
     tag: 'latest',
   },
   hooks: {
-    'before:init': ['pnpm test'],
+    'before:init': ['pnpm test', 'pnpm build'],
     // 'before:release': 'pnpm build',
     'after:release': 'echo Successfully released ${name} v${version} to ${repo.repository}.',
   },
