@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@release-it/conventional-changelog': ^4.1.0
+  '@types/fs-extra': ^9.0.13
   '@types/jest': ^27.4.0
   '@types/node': ^12.20.41
   '@types/wechat-miniprogram': ^3.4.0
@@ -13,6 +14,7 @@ specifiers:
   eslint-config-prettier: ^8.3.0
   eslint-plugin-import: ^2.25.4
   esno: ^0.14.0
+  fs-extra: ^10.0.0
   j-component: ^1.4.5
   jest: ^27.4.7
   lint-staged: ^12.2.2
@@ -29,6 +31,7 @@ specifiers:
 
 devDependencies:
   '@release-it/conventional-changelog': 4.1.0_release-it@14.12.3
+  '@types/fs-extra': 9.0.13
   '@types/jest': 27.4.0
   '@types/node': 12.20.42
   '@types/wechat-miniprogram': 3.4.0
@@ -40,6 +43,7 @@ devDependencies:
   eslint-config-prettier: 8.3.0_eslint@8.7.0
   eslint-plugin-import: 2.25.4_eslint@8.7.0
   esno: 0.14.0_typescript@4.5.5
+  fs-extra: 10.0.0
   j-component: 1.4.6
   jest: 27.4.7
   lint-staged: 12.2.2

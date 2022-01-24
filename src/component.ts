@@ -10,52 +10,97 @@ import { watchBinding, watchRender } from './bindings'
 import { wrapHooks } from './lifetimes'
 import { error } from './errorHandling'
 
-type ComponentOptionsBase<P, IsPage = false> = {
+type StyleIsolation = 'isolated' | 'apply-shared' | 'shared'
+type PageStyleIsolation =
+  | 'isolated'
+  | 'apply-shared'
+  | 'shared'
+  | 'page-isolated'
+  | 'page-apply-shared'
+  | 'page-shared'
+
+interface ComponentInnerOptions<I = false> {
+  /**
+   * 启用多slot支持
+   */
+  multipleSlots?: boolean
+  /**
+   * 组件样式隔离
+   */
+  styleIsolation?: I extends true ? PageStyleIsolation : StyleIsolation
+  /**
+   * 虚拟化组件节点
+   */
+  virtualHost?: boolean
+}
+
+export interface RelationOption {
+  /** 目标组件的相对关系 */
+  type: 'parent' | 'child' | 'ancestor' | 'descendant'
+  /** 关系生命周期函数，当关系被建立在页面节点树中时触发，触发时机在组件attached生命周期之后 */
+  linked?(target: any): void
+  /** 关系生命周期函数，当关系在页面节点树中发生改变时触发，触发时机在组件moved生命周期之后 */
+  linkChanged?(target: any): void
+  /** 关系生命周期函数，当关系脱离页面节点树时触发，触发时机在组件detached生命周期之后 */
+  unlinked?(target: any): void
+  /** 如果这一项被设置，则它表示关联的目标节点所应具有的behavior，所有拥有这一behavior的组件节点都会被关联 */
+  target?: string | undefined
+}
+
+type ComponentOptionsBase<P, I = false> = {
   behaviors?: []
+  /**
+   * 组件接受的外部样式类
+   */
   externalClasses?: string[]
-  relations?: {}
-  options?: Expand<WechatMiniprogram.Component.ComponentOptions>
+  /**
+   * 组件间关系定义
+   */
+  relations?: {
+    [key: string]: RelationOption
+  }
+  /**
+   * 一些选项
+   */
+  options?: ComponentInnerOptions<I>
   setup: (
     this: void,
     props: P,
-    ctx: IsPage extends true ? Expand<PageInstance> : Expand<ComponentInstance>
+    ctx: I extends true ? Expand<PageInstance> : Expand<ComponentInstance>
   ) => Record<string, any> | void
 }
 
-type ComponentOptionsWithoutProps<Props = {}, IsPage = false> = ComponentOptionsBase<
-  Props,
-  IsPage
-> & {
+type ComponentOptionsWithoutProps<P = {}, I = false> = ComponentOptionsBase<P, I> & {
   props?: undefined
 }
 
 type ComponentOptionsWithArrayProps<
   PropNames extends string = string,
-  IsPage = false,
-  Props = Readonly<{ [key in PropNames]?: any }>
-> = ComponentOptionsBase<Props, IsPage> & {
+  I = false,
+  P = Readonly<{ [key in PropNames]?: any }>
+> = ComponentOptionsBase<P, I> & {
   props: PropNames[]
 }
 
 type ComponentOptionsWithObjectProps<
   PropsOptions = ComponentObjectPropsOptions,
-  IsPage = false,
-  Props = Readonly<Expand<ExtractPropTypes<PropsOptions>>>
-> = ComponentOptionsBase<Props, IsPage> & {
+  I = false,
+  P = Readonly<Expand<ExtractPropTypes<PropsOptions>>>
+> = ComponentOptionsBase<P, I> & {
   props: PropsOptions
 }
 
-function defineBaseComponent<Props = {}, IsPage = false>(
-  options: ComponentOptionsWithoutProps<Props, IsPage>,
-  isPage: IsPage
+function defineBaseComponent<P = {}, I = false>(
+  options: ComponentOptionsWithoutProps<P, I>,
+  isPage: I
 ): string
-function defineBaseComponent<PropNames extends string, IsPage = false>(
-  options: ComponentOptionsWithArrayProps<PropNames, IsPage>,
-  isPage: IsPage
+function defineBaseComponent<P extends string, I = false>(
+  options: ComponentOptionsWithArrayProps<P, I>,
+  isPage: I
 ): string
-function defineBaseComponent<PropsOptions extends Readonly<ComponentPropsOptions>, IsPage = false>(
-  options: ComponentOptionsWithObjectProps<PropsOptions, IsPage>,
-  isPage: IsPage
+function defineBaseComponent<P extends Readonly<ComponentPropsOptions>, I = false>(
+  options: ComponentOptionsWithObjectProps<P, I>,
+  isPage: I
 ): string
 function defineBaseComponent(
   componentOptions: ComponentOptionsBase<Record<string, any>> & {

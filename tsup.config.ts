@@ -13,9 +13,10 @@ export default defineConfig(() => {
 
   return {
     entryPoints: ['src/index.ts'],
-    format: ['esm'],
+    format: ['cjs', 'esm'],
     target: 'es2015',
     splitting: false,
+    // legacyOutput: true,
     minify: true,
     sourcemap: true,
     clean: true,
@@ -28,5 +29,6 @@ export default defineConfig(() => {
     banner: {
       js: `/**\n * name: ${pkg.name}\n * version: ${pkg.version}\n */`,
     },
+    onSuccess: ``,
   }
 })
