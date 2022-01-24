@@ -1,3 +1,3 @@
-export type Behavior = {
-  path: string
+export type Plugin = {
+  is: string
 }

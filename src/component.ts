@@ -4,7 +4,7 @@ import type { ComponentInstance, Instance, PageInstance } from './instance'
 import { createCore, setCurrentInstance } from './instance'
 import type { ComponentObjectPropsOptions, ComponentPropsOptions, ExtractPropTypes } from './props'
 import { convertToProperties } from './props'
-import type { Expand } from './types'
+import type { Data, Expand } from './types'
 import { bindingToData, isFunction } from './util'
 import { watchBinding, watchRender } from './bindings'
 import { wrapHooks } from './lifetimes'
@@ -67,7 +67,7 @@ type ComponentOptionsBase<P, I = false> = {
     this: void,
     props: P,
     ctx: I extends true ? Expand<PageInstance> : Expand<ComponentInstance>
-  ) => Record<string, any> | void
+  ) => AnyObject | void
 }
 
 type ComponentOptionsWithoutProps<P = {}, I = false> = ComponentOptionsBase<P, I> & {
@@ -77,7 +77,7 @@ type ComponentOptionsWithoutProps<P = {}, I = false> = ComponentOptionsBase<P, I
 type ComponentOptionsWithArrayProps<
   PropNames extends string = string,
   I = false,
-  P = Readonly<{ [key in PropNames]?: any }>
+  P = Readonly<{ [key in PropNames]?: string }>
 > = ComponentOptionsBase<P, I> & {
   props: PropNames[]
 }
@@ -103,7 +103,7 @@ function defineBaseComponent<P extends Readonly<ComponentPropsOptions>, I = fals
   isPage: I
 ): string
 function defineBaseComponent(
-  componentOptions: ComponentOptionsBase<Record<string, any>> & {
+  componentOptions: ComponentOptionsBase<AnyObject> & {
     props?: ComponentPropsOptions
   },
   isPage: boolean
@@ -130,12 +130,12 @@ function defineBaseComponent(
     const ctx = this
     const core = this[CORE_KEY]
     setCurrentInstance(this)
+    ctx.nextTick = core.nextTick
     for (const prop of propsKeys) {
       core.props[prop] = this.data[prop]
     }
-    const props = readonly(core.props) as any
-    ctx.nextTick = core.nextTick
-    const bindings = setup(props, ctx as any) || {}
+    const props = readonly(core.props) as Data
+    const bindings = setup(props, ctx) || {}
     core.bindings = bindings
     if (bindings) {
       Object.keys(bindings).forEach((key: string) => {
@@ -157,10 +157,10 @@ function defineBaseComponent(
     setCurrentInstance(null)
   }
 
-  const observers: Record<string, any> = {}
+  const observers: AnyObject = {}
   if (!isPage) {
     for (const key of propsKeys) {
-      observers[key] = function (this: ComponentInstance, value: any) {
+      observers[key] = function (this: ComponentInstance, value: unknown) {
         const _props = this[CORE_KEY].props
         if (_props[key] !== value) {
           _props[key] = value

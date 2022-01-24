@@ -6,7 +6,7 @@ import { arrayToRecord } from './util'
 type LaunchOptions = Expand<WechatMiniprogram.App.LaunchShowOption>
 
 export type AppOption = {
-  setup: (options: LaunchOptions) => Record<string, any> | void
+  setup: (options: LaunchOptions) => AnyObject | void
 }
 
 export type AppCore = {
@@ -23,7 +23,7 @@ const appCore: AppCore = {
 
 function wrapAppHooks(): { [key in typeof APP_LIFETIMES[number]]: Func } {
   const lifeTimes = arrayToRecord<typeof APP_LIFETIMES, Func>(APP_LIFETIMES, funcKey => {
-    return function (this: any, ...args: unknown[]) {
+    return function (this: AnyObject, ...args: unknown[]) {
       const core: AppCore = this[CORE_KEY]
       const hooks = core.hooks[funcKey]
       let ret: unknown = undefined
@@ -52,11 +52,11 @@ function createAppHook<T extends Func>(lifetime: typeof APP_LIFETIMES[number]) {
 export function createApp(options: AppOption) {
   const { setup } = options
   const onLaunch = function (
-    this: WechatMiniprogram.App.Instance<Record<string, any>>,
+    this: WechatMiniprogram.App.Instance<AnyObject>,
     launchOptions: LaunchOptions
   ) {
     appCore.isPending = true
-    const bindings: Record<string, any> = setup(launchOptions) || {}
+    const bindings: AnyObject = setup(launchOptions) || {}
     appCore.isPending = false
     if (bindings) {
       Object.keys(bindings).forEach(key => {

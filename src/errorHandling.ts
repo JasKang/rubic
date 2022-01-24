@@ -30,8 +30,8 @@ export function callWithErrorHandling(
   let res
   try {
     res = args ? fn(...args) : fn()
-  } catch (err: any) {
-    handleError(err, instance, type)
+  } catch (err: unknown) {
+    handleError(err as Error, instance, type)
   }
   return res
 }
@@ -45,7 +45,7 @@ export function callWithAsyncErrorHandling(
   if (isFunction(fn)) {
     const res = callWithErrorHandling(fn, instance, type, args)
     if (res && isPromise(res)) {
-      res.catch((err: any) => {
+      res.catch((err: Error) => {
         handleError(err, instance, type)
       })
     }
