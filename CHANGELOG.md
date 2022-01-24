@@ -1,3 +1,9 @@
+## [0.0.3-beta.4](https://github.com/JasKang/rubic/compare/v0.0.3-beta.3...v0.0.3-beta.4) (2022-01-24)
+
+### Features
+
+- 添加渲染回调函数 nextTick ([9622124](https://github.com/JasKang/rubic/commit/9622124ff21b1ac22aa6821c98644d0a5457b0f6))
+
 ## [0.0.3-beta.3](https://github.com/JasKang/rubic/compare/v0.0.3-beta.2...v0.0.3-beta.3) (2022-01-24)
 
 ### Bug Fixes
