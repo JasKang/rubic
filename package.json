@@ -1,6 +1,6 @@
 {
   "name": "rubic",
-  "version": "0.0.3-beta.2",
+  "version": "0.0.3-beta.3",
   "description": "rubic",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

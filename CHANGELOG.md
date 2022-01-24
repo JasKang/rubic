@@ -1,3 +1,9 @@
+## [0.0.3-beta.3](https://github.com/JasKang/rubic/compare/v0.0.3-beta.2...v0.0.3-beta.3) (2022-01-24)
+
+### Bug Fixes
+
+- hooks before ([81a7ecd](https://github.com/JasKang/rubic/commit/81a7ecd357a2affa1a0d36475f2fbfbdb952b2fe))
+
 ## [0.0.3-beta.2](https://github.com/JasKang/rubic/compare/v0.0.3-beta.1...v0.0.3-beta.2) (2022-01-24)
 
 ### Bug Fixes
