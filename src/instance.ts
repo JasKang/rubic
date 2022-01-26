@@ -3,7 +3,7 @@ import { reactive, shallowReactive, EffectScope } from '@vue/reactivity'
 import type { HookType } from './constants'
 import { CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES, PAGE_ON_METHODS } from './constants'
 
-import type { Data, Func } from './types'
+import type { Data, FlatType, Func } from './types'
 import { arrayToRecord, bindingToData } from './util'
 
 export type NextTick = (fn: () => void) => void
@@ -37,21 +37,13 @@ export interface CustomComponentContext {}
 
 export type InstanceCore = { [CORE_KEY]: Core; nextTick: NextTick }
 
-export type PageInstance = WechatMiniprogram.Component.Instance<
-  Data,
-  {},
-  {},
-  InstanceCore & CustomPageContext,
-  true
+type BaseInstance<D, C, P extends boolean = false> = FlatType<
+  WechatMiniprogram.Component.Instance<D, {}, {}, InstanceCore & C, P>
 >
 
-export type ComponentInstance = WechatMiniprogram.Component.Instance<
-  Data,
-  {},
-  {},
-  InstanceCore & CustomComponentContext,
-  false
->
+export type PageInstance = BaseInstance<Data, CustomPageContext, true>
+
+export type ComponentInstance = BaseInstance<Data, CustomComponentContext, false>
 
 export type Instance = PageInstance | ComponentInstance
 

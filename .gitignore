@@ -17,10 +17,12 @@ node_modules/
 # dotenv environment variables file
 .env
 .env.test
+
 .cache
-dist
 
 # vuepress build output
 .vuepress/dist
 .temp
 
+temp
+dist

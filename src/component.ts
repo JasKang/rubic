@@ -48,7 +48,7 @@ export interface RelationOption {
 }
 
 type ComponentOptionsBase<P, I = false> = {
-  behaviors?: []
+  behaviors?: string[]
   /**
    * 组件接受的外部样式类
    */
@@ -228,13 +228,13 @@ export function definePage(options: any) {
 //     // ctx.
 //   },
 // })
-// definePage({
-//   props: ['title', 'desc'],
-//   setup(props, ctx) {
-//     // ctx.
-//     // ctx.
-//   },
-// })
+definePage({
+  props: ['title', 'desc'],
+  setup(props, ctx) {
+    // ctx.
+    // ctx.
+  },
+})
 
 // defineComponent({
 //   props: {

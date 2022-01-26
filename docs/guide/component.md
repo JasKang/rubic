@@ -59,8 +59,8 @@ definePage({
 
 `type` 属性的类型可以为 `String` `Number` `Boolean` `Object` `Array` 其一，也可以为 `null` 表示不限制类型。
 
-::: warning
-但是，因为 props 是响应式的，你不能使用 ES6 解构，它会消除 prop 的响应性。
+::: warning 注意
+但是，与 Vue3 一样 props 是响应式的，你不能使用 ES6 解构，它会消除 prop 的响应性。
 :::
 
 如果需要解构 prop，可以在 setup 函数中使用 toRefs 函数来完成此操作：

@@ -26,8 +26,9 @@
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
+    "build": "tsup && pnpm run build:miniprogram && pnpm run build:types",
     "build:miniprogram": "esno scripts/mpBuild.ts",
-    "build": "tsup --onSuccess \"pnpm run build:miniprogram\"",
+    "build:types": "api-extractor run --local",
     "prepublishOnly": "pnpm build",
     "release": "release-it",
     "release:beta": "release-it patch --preRelease=beta",
@@ -35,6 +36,7 @@
     "coverage": "vitest --coverage"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.19.4",
     "@release-it/conventional-changelog": "^4.1.0",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.4.0",

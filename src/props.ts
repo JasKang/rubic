@@ -36,18 +36,6 @@ type RequiredKeys<T> = {
 
 type OptionalKeys<T> = Exclude<keyof T, RequiredKeys<T>>
 
-// type DefaultKeys<T> = {
-//   [K in keyof T]: T[K] extends
-//     | { default: any }
-//     // Boolean implicitly defaults to false
-//     | BooleanConstructor
-//     | { type: BooleanConstructor }
-//     ? T[K] extends { type: BooleanConstructor; required: true } // not default if Boolean is marked as required
-//       ? never
-//       : K
-//     : never
-// }[keyof T]
-
 type InferPropType<T> = [T] extends [null]
   ? any // null & true would fail to infer
   : [T] extends [{ type: null | true }]
