@@ -13,6 +13,7 @@ module.exports = {
   },
   github: {
     release: true,
+    preRelease: false,
   },
   plugins: {
     '@release-it/conventional-changelog': {
