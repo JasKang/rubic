@@ -1,3 +1,10 @@
+## [0.0.3-beta.5](https://github.com/JasKang/rubic/compare/v0.0.3-beta.4...v0.0.3-beta.5) (2022-01-26)
+
+### Bug Fixes
+
+- test definePage ([0c2f0d8](https://github.com/JasKang/rubic/commit/0c2f0d8abc11c62ae5dd499af7021aa829668018))
+- types pree deps ([96b5128](https://github.com/JasKang/rubic/commit/96b5128753f33f7bf1d3f65db11cf27ac6d2c536))
+
 ## [0.0.3-beta.4](https://github.com/JasKang/rubic/compare/v0.0.3-beta.3...v0.0.3-beta.4) (2022-01-24)
 
 ### Features
