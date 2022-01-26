@@ -228,13 +228,13 @@ export function definePage(options: any) {
 //     // ctx.
 //   },
 // })
-definePage({
-  props: ['title', 'desc'],
-  setup(props, ctx) {
-    // ctx.
-    // ctx.
-  },
-})
+// definePage({
+//   props: ['title', 'desc'],
+//   setup(props, ctx) {
+//     // ctx.
+//     // ctx.
+//   },
+// })
 
 // defineComponent({
 //   props: {
