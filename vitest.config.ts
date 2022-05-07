@@ -1,6 +1,5 @@
-/// <reference types="vitest" />
 import { resolve } from 'path'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   resolve: {
@@ -12,10 +11,12 @@ export default defineConfig({
     __TEST__: true,
   },
   test: {
+    include: ['tests/**/*.{test,spec}.{ts,js}'],
     globals: true,
     environment: 'jsdom',
     watch: false,
-    setupFiles: ['vitest.setup.ts'],
+    // globalSetup: ['./tests/mock/setup.ts'],
+    setupFiles: ['tests/mock/setup.ts'],
     coverage: {
       include: ['src/**/*.ts'],
       reporter: process.env.CI ? 'lcov' : 'text',

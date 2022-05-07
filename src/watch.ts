@@ -1,36 +1,17 @@
-import type { Ref, ComputedRef, EffectScheduler } from '@vue/reactivity'
-import { isRef, ReactiveEffect, isReactive } from '@vue/reactivity'
+import type { Ref, ComputedRef, EffectScheduler, DebuggerOptions } from '@vue/reactivity'
+import { isRef, isShallow, ReactiveEffect, isReactive } from '@vue/reactivity'
 import type { SchedulerJob } from './scheduler'
-import { queueJob, queuePostFlushCb } from './scheduler'
-import {
-  isObject,
-  isArray,
-  isFunction,
-  isMap,
-  isSet,
-  isPlainObject,
-  NOOP,
-  hasChanged,
-  remove,
-} from './util'
+import { queuePostFlushCb, queuePreFlushCb } from './scheduler'
+import { ErrorTypes, callWithErrorHandling, callWithAsyncErrorHandling, warn } from './errorHandling'
+import { hasChanged, isArray, isFunction, isMap, isObject, isPlainObject, isSet, NOOP, remove } from './utils'
 import { getCurrentInstance } from './instance'
-import {
-  callWithErrorHandling,
-  callWithAsyncErrorHandling,
-  warn,
-  ErrorTypes,
-} from './errorHandling'
-import { CORE_KEY } from './constants'
+import { CORE_KEY } from '.'
 
-export type WatchEffect = (onInvalidate: InvalidateCbRegistrator) => void
+export type WatchEffect = (onCleanup: OnCleanup) => void
 
 export type WatchSource<T = any> = Ref<T> | ComputedRef<T> | (() => T)
 
-export type WatchCallback<V = any, OV = any> = (
-  value: V,
-  oldValue: OV,
-  onInvalidate: InvalidateCbRegistrator
-) => any
+export type WatchCallback<V = any, OV = any> = (value: V, oldValue: OV, onCleanup: OnCleanup) => any
 
 type MapSources<T, Immediate> = {
   [K in keyof T]: T[K] extends WatchSource<infer V>
@@ -44,9 +25,9 @@ type MapSources<T, Immediate> = {
     : never
 }
 
-type InvalidateCbRegistrator = (cb: () => void) => void
+type OnCleanup = (cleanupFn: () => void) => void
 
-export interface WatchOptionsBase {
+export interface WatchOptionsBase extends DebuggerOptions {
   flush?: 'pre' | 'post' | 'sync'
 }
 
@@ -58,41 +39,22 @@ export interface WatchOptions<Immediate = boolean> extends WatchOptionsBase {
 export type WatchStopHandle = () => void
 
 // Simple effect.
-export function watchEffect(effect: WatchEffect): WatchStopHandle {
-  return doWatch(effect, null, {})
+export function watchEffect(effect: WatchEffect, options?: WatchOptionsBase): WatchStopHandle {
+  return doWatch(effect, null, options)
+}
+
+export function watchPostEffect(effect: WatchEffect, options?: DebuggerOptions) {
+  return doWatch(effect, null, Object.assign(options || {}, { flush: 'post' }) as WatchOptionsBase)
+}
+
+export function watchSyncEffect(effect: WatchEffect, options?: DebuggerOptions) {
+  return doWatch(effect, null, Object.assign(options || {}, { flush: 'sync' }) as WatchOptionsBase)
 }
 
 // initial value for watchers to trigger on undefined initial values
 const INITIAL_WATCHER_VALUE = {}
 
 type MultiWatchSources = (WatchSource<unknown> | object)[]
-
-export function traverse(value: unknown, seen?: Set<unknown>) {
-  if (!isObject(value) || (value as any)['__v_skip']) {
-    return value
-  }
-  seen = seen || new Set()
-  if (seen.has(value)) {
-    return value
-  }
-  seen.add(value)
-  if (isRef(value)) {
-    traverse(value.value, seen)
-  } else if (isArray(value)) {
-    for (let i = 0; i < value.length; i++) {
-      traverse(value[i], seen)
-    }
-  } else if (isSet(value) || isMap(value)) {
-    value.forEach((v: any) => {
-      traverse(v, seen)
-    })
-  } else if (isPlainObject(value)) {
-    for (const key in value) {
-      traverse((value as any)[key], seen)
-    }
-  }
-  return value
-}
 
 // overload: array of multiple sources + cb
 export function watch<T extends MultiWatchSources, Immediate extends Readonly<boolean> = false>(
@@ -104,10 +66,7 @@ export function watch<T extends MultiWatchSources, Immediate extends Readonly<bo
 // overload: multiple sources w/ `as const`
 // watch([foo, bar] as const, () => {})
 // somehow [...T] breaks when the type is readonly
-export function watch<
-  T extends Readonly<MultiWatchSources>,
-  Immediate extends Readonly<boolean> = false
->(
+export function watch<T extends Readonly<MultiWatchSources>, Immediate extends Readonly<boolean> = false>(
   source: T,
   cb: WatchCallback<MapSources<T, false>, MapSources<T, Immediate>>,
   options?: WatchOptions<Immediate>
@@ -146,11 +105,25 @@ export function watch<T = any, Immediate extends Readonly<boolean> = false>(
 function doWatch(
   source: WatchSource | WatchSource[] | WatchEffect | object,
   cb: WatchCallback | null,
-  { immediate, deep, flush }: WatchOptions = {}
+  { immediate, deep, flush, onTrack, onTrigger }: WatchOptions = {}
 ): WatchStopHandle {
+  if (!cb) {
+    if (immediate !== undefined) {
+      warn(
+        `watch() "immediate" option is only respected when using the ` + `watch(source, callback, options?) signature.`
+      )
+    }
+    if (deep !== undefined) {
+      warn(`watch() "deep" option is only respected when using the ` + `watch(source, callback, options?) signature.`)
+    }
+  }
+
   const warnInvalidSource = (s: unknown) => {
     warn(
-      `Invalid watch source: ${s} A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.`
+      `Invalid watch source: ` +
+        s +
+        `A watch source can only be a getter/effect function, a ref, ` +
+        `a reactive object, or an array of these types.`
     )
   }
 
@@ -161,8 +134,7 @@ function doWatch(
 
   if (isRef(source)) {
     getter = () => source.value
-    // @ts-expect-error: _shallow is vue inner prop
-    forceTrigger = !!source._shallow
+    forceTrigger = isShallow(source)
   } else if (isReactive(source)) {
     getter = () => source
     deep = true
@@ -188,12 +160,13 @@ function doWatch(
     } else {
       // no cb -> simple effect
       getter = () => {
+        if (instance && instance[CORE_KEY].isUnmounted) {
+          return
+        }
         if (cleanup) {
           cleanup()
         }
-        return callWithAsyncErrorHandling(source, instance, ErrorTypes.watch_callback, [
-          onInvalidate,
-        ])
+        return callWithAsyncErrorHandling(source, instance, ErrorTypes.watch_callback, [onCleanup])
       }
     }
   } else {
@@ -207,7 +180,7 @@ function doWatch(
   }
 
   let cleanup: () => void
-  const onInvalidate: InvalidateCbRegistrator = (fn: () => void) => {
+  const onCleanup: OnCleanup = (fn: () => void) => {
     cleanup = effect.onStop = () => {
       callWithErrorHandling(fn, instance, ErrorTypes.watch_cleanup)
     }
@@ -236,7 +209,7 @@ function doWatch(
           newValue,
           // pass undefined as the old value when it's changed for the first time
           oldValue === INITIAL_WATCHER_VALUE ? undefined : oldValue,
-          onInvalidate,
+          onCleanup,
         ])
         oldValue = newValue
       }
@@ -258,11 +231,24 @@ function doWatch(
   } else {
     // default: 'pre'
     scheduler = () => {
-      queueJob(job)
+      // 这里注意
+      queuePreFlushCb(job)
+      // if (!instance) {
+      //   queuePreFlushCb(job)
+      // } else {
+      //   // with 'pre' option, the first call must happen before
+      //   // the component is mounted so it is called synchronously.
+      //   job()
+      // }
     }
   }
 
   const effect = new ReactiveEffect(getter, scheduler)
+
+  // if (__DEV__) {
+  effect.onTrack = onTrack
+  effect.onTrigger = onTrigger
+  // }
 
   // initial run
   if (cb) {
@@ -272,7 +258,7 @@ function doWatch(
       oldValue = effect.run()
     }
   } else if (flush === 'post') {
-    // queuePostFlushCb(effect.run.bind(effect))
+    queuePostFlushCb(effect.run.bind(effect))
   } else {
     effect.run()
   }
@@ -280,7 +266,46 @@ function doWatch(
   return () => {
     effect.stop()
     if (instance) {
-      remove(instance[CORE_KEY].scope.effects, effect)
+      // @ts-ignore
+      remove(instance[CORE_KEY].scope.effects!, effect)
     }
   }
+}
+
+// export function createPathGetter(ctx: any, path: string) {
+//   const segments = path.split('.')
+//   return () => {
+//     let cur = ctx
+//     for (let i = 0; i < segments.length && cur; i++) {
+//       cur = cur[segments[i]]
+//     }
+//     return cur
+//   }
+// }
+
+export function traverse(value: unknown, seen?: Set<unknown>) {
+  if (!isObject(value) || (value as any)['__v_skip']) {
+    return value
+  }
+  seen = seen || new Set()
+  if (seen.has(value)) {
+    return value
+  }
+  seen.add(value)
+  if (isRef(value)) {
+    traverse(value.value, seen)
+  } else if (isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      traverse(value[i], seen)
+    }
+  } else if (isSet(value) || isMap(value)) {
+    value.forEach((v: any) => {
+      traverse(v, seen)
+    })
+  } else if (isPlainObject(value)) {
+    for (const key in value) {
+      traverse((value as any)[key], seen)
+    }
+  }
+  return value
 }

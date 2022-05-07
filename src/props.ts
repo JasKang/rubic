@@ -1,5 +1,5 @@
 import type { Data, IfAny } from './types'
-import { isPlainObject } from './util'
+import { isPlainObject } from './utils'
 
 type PropMethod<T, TConstructor = any> = [T] extends [((...args: any) => any) | undefined] // if is function with args, allowing non-required functions
   ? { new (): TConstructor; (): T; readonly prototype: TConstructor } // Create Function like constructor
@@ -15,6 +15,8 @@ export interface PropOptions<T = any, D = T> {
 }
 
 export type Prop<T, D = T> = PropOptions<T, D> | PropType<T>
+
+export type NormalizedProps = Record<string, PropOptions>
 
 export type ComponentObjectPropsOptions<P = Data> = {
   [K in keyof P]: Prop<P[K]> | null
@@ -53,14 +55,12 @@ type InferPropType<T> = [T] extends [null]
   : T
 
 export type ExtractPropTypes<O> = {
-  // use `keyof Pick<O, RequiredKeys<O>>` instead of `RequiredKeys<O>` to support IDE features
   [K in keyof Pick<O, RequiredKeys<O>>]: InferPropType<O[K]>
 } & {
-  // use `keyof Pick<O, OptionalKeys<O>>` instead of `OptionalKeys<O>` to support IDE features
   [K in keyof Pick<O, OptionalKeys<O>>]?: InferPropType<O[K]>
 }
 
-export function convertToProperties(props: ComponentPropsOptions) {
+export function convertProps(props: ComponentPropsOptions) {
   const properties: Record<string, any> = {}
   if (Array.isArray(props)) {
     props.forEach(prop => {
@@ -95,37 +95,3 @@ export function convertToProperties(props: ComponentPropsOptions) {
 
   return properties
 }
-
-// type ToUnion<T> = T extends Array<infer A> //
-//   ? ToUnion<A>
-//   : T extends null
-//   ? any
-//   : T extends StringConstructor
-//   ? string
-//   : T extends NumberConstructor
-//   ? number
-//   : T extends BooleanConstructor
-//   ? boolean
-//   : T extends ArrayConstructor
-//   ? any[]
-//   : T extends ObjectConstructor
-//   ? AnyObject
-//   : never
-
-// type Props<P> = {
-//   [key in keyof P]: P[key] extends { type: infer A } ? ToUnion<A> : ToUnion<P[key]>
-// }
-
-// declare function VueBasicProps<P extends ComponentPropsOptions>(options: {
-//   data(this: Props<P>): void
-//   props: P
-// }): any
-
-// VueBasicProps({
-//   props: ['a', 'c'] as const,
-//   data() {
-//     this.a
-//     this.b
-//   },
-// })
-// type a = ToUnion<typeof String>

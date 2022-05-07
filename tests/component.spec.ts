@@ -18,30 +18,27 @@ import type { Core } from '../src/instance'
 describe('component', () => {
   test('lifetimes', async () => {
     const calledKeys: string[] = []
-    const comp = await renderComponent(
-      { template: '<div id="text" bind:tap="tap">data: {{text}}</div>' },
-      () => {
-        defineComponent({
-          setup() {
-            calledKeys.push('onAttach')
-            onReady(() => {
-              calledKeys.push('onReady')
-            })
-            onMoved(() => {
-              calledKeys.push('onMoved')
-            })
-            onDetached(() => {
-              calledKeys.push('onDetached')
-            })
-            onReady(() => {
-              calledKeys.push('onReady 2')
-            })
-            return {}
-          },
-        })
-      }
-    )
-    comp.render()
+    const comp = await renderComponent({ template: '<div id="text" bind:tap="tap">data: {{text}}</div>' }, () => {
+      defineComponent({
+        setup() {
+          calledKeys.push('onAttach')
+          onReady(() => {
+            calledKeys.push('onReady')
+          })
+          onMoved(() => {
+            calledKeys.push('onMoved')
+          })
+          onDetached(() => {
+            calledKeys.push('onDetached')
+          })
+          onReady(() => {
+            calledKeys.push('onReady 2')
+          })
+          return {}
+        },
+      })
+    })
+
     expect(calledKeys).toEqual(['onAttach', 'onReady', 'onReady 2'])
     comp.triggerLifeTime('moved')
     expect(calledKeys[calledKeys.length - 1]).toEqual('onMoved')
@@ -52,7 +49,7 @@ describe('component', () => {
   test('lifetime outside setup', () => {
     const resetConsole = mockConsole()
     onShow(() => {})
-    expect(console.error).toBeCalledWith('[Jweapp]: 当前没有实例 无法创建show钩子.')
+    expect(console.error).toBeCalledWith('[core]: 当前没有实例 无法创建 onShow 钩子.')
     resetConsole()
   })
 
@@ -78,7 +75,6 @@ describe('component', () => {
           },
         })
     )
-    comp.render()
     await sleep(10)
     expect(comp.dom!.innerHTML).toBe('<div>count:1 countX2:2 numRef:0</div>')
     comp.querySelector('#text')?.dispatchEvent('tap')
@@ -96,10 +92,9 @@ describe('component', () => {
         },
       })
     )
-    comp.render()
     await sleep(10)
     expect(console.error).toBeCalledWith(
-      '[Jweapp]: 错误的数据类型 sym:[object Symbol], 小程序 data 仅支持 string | number | boolean | object | array 类型. | instance: id'
+      '[core]: 错误的数据类型 sym:[object Symbol], 小程序 data 仅支持可以转成 JSON 的类型(string | number | boolean | object | array) | instance: id'
     )
     resetConsole()
   })
@@ -128,7 +123,6 @@ describe('component', () => {
         },
       })
     )
-    comp.render()
     sleep(10)
     const core = comp.instance[CORE_KEY] as unknown as Core
     expect(dummy).toBe(0)
@@ -152,7 +146,7 @@ describe('component', () => {
     expect(core.scope.effects.length).toBe(3)
   })
 
-  test('props', async () => {
+  test('properties', async () => {
     const comp = await renderComponent(
       {
         template: '<div id="text">text:{{text}} value:{{value}}</div>',
@@ -163,7 +157,7 @@ describe('component', () => {
       },
       () =>
         defineComponent({
-          props: {
+          properties: {
             title: String,
             desc: {
               type: String,
@@ -180,7 +174,6 @@ describe('component', () => {
           },
         })
     )
-    comp.render()
     await sleep(10)
     expect(comp.dom!.innerHTML).toBe('<div>text:标题无描述 value:1</div>')
   })

@@ -1,38 +1,29 @@
-import { isRef } from '@vue/reactivity'
-import { CORE_KEY } from './constants'
-import type { Instance } from './instance'
-import { isObject } from './util'
-import { watch } from './watch'
+import { isProxy, isRef, toRaw, type Ref } from '@vue/reactivity'
+import { isArray, isFunction, isBaseType, isPlainObject, toTypeString } from './utils'
 
-export function watchBinding(this: Instance, key: string, value: unknown): void {
-  if (!isObject(value)) {
-    return
+export function bindingToData(x: any, key: string): any {
+  if (isBaseType(x) || isFunction(x)) {
+    return x
   }
-  watch(
-    isRef(value) ? value : () => value,
-    () => {
-      if (this[CORE_KEY].render.keys.indexOf(key) === -1) {
-        this[CORE_KEY].render.keys.push(key)
-      }
-    },
-    {
-      deep: true,
-    }
-  )
-}
-
-export function watchRender(this: Instance) {
-  const { keys } = this[CORE_KEY].render
-  watch(
-    () => keys,
-    () => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this[CORE_KEY].render.patchData()
-      keys.splice(0, keys.length)
-    },
-    {
-      deep: true,
-      flush: 'post',
-    }
+  if (isRef(x)) {
+    return bindingToData((x as Ref<any>).value, key)
+  }
+  if (isProxy(x)) {
+    return bindingToData(toRaw(x), key)
+  }
+  if (isArray(x)) {
+    return (x as any[]).map(item => bindingToData(item, key))
+  }
+  if (isPlainObject(x)) {
+    const obj: Record<string, any> = {}
+    Object.keys(x).forEach(key => {
+      obj[key] = bindingToData(x[key], key)
+    })
+    return obj
+  }
+  throw new Error(
+    `错误的数据类型 ${key}:${toTypeString(
+      x
+    )}, 小程序 data 仅支持可以转成 JSON 的类型(string | number | boolean | object | array)`
   )
 }

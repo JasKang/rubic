@@ -1,84 +1,43 @@
+import { readonly } from '@vue/reactivity'
+import type { AppCustomContext, Instance } from './instance'
+import { createCore, setCurrentInstance } from './instance'
+import { wrapLifetimeHooks } from './lifetimes'
 import { APP_LIFETIMES, CORE_KEY } from './constants'
-import { error } from './errorHandling'
-import type { FlatType, Func } from './types'
-import { arrayToRecord } from './util'
 
-type LaunchOptions = FlatType<WechatMiniprogram.App.LaunchShowOption>
-
-export type AppOption = {
-  setup: (options: LaunchOptions) => AnyObject | void
+export type AppOptions = Partial<WechatMiniprogram.App.Option> & {
+  setup: () => Record<string, any> | void
+  [key: string]: any
 }
 
-export type AppCore = {
-  hooks: {
-    [key in typeof APP_LIFETIMES[number]]: Func[]
-  }
-  isPending: boolean
+const app: Record<string, any> = {
+  context: {},
 }
 
-const appCore: AppCore = {
-  hooks: arrayToRecord(APP_LIFETIMES, () => []),
-  isPending: false,
+export function getAppContext(): AppCustomContext {
+  return readonly(app.context)
 }
 
-function wrapAppHooks(): { [key in typeof APP_LIFETIMES[number]]: Func } {
-  const lifeTimes = arrayToRecord<typeof APP_LIFETIMES, Func>(APP_LIFETIMES, funcKey => {
-    return function (this: AnyObject, ...args: unknown[]) {
-      const core: AppCore = this[CORE_KEY]
-      const hooks = core.hooks[funcKey]
-      let ret: unknown = undefined
-      hooks.forEach((func: Func) => {
-        ret = func(...args)
-      })
-      return ret
-    }
-  })
-  return lifeTimes
-}
+export function createApp(options: AppOptions) {
+  const { setup, ...others } = options
+  Object.assign(app, others)
 
-function createAppHook<T extends Func>(lifetime: typeof APP_LIFETIMES[number]) {
-  return function (hook: T) {
-    const { hooks, isPending } = appCore
-    if (isPending) {
-      hooks[lifetime].push(hook)
-    } else {
-      error(
-        new Error(`${lifetime.replace('on', 'onApp')} 函数必须在 createApp -> setup 期间同步使用.`)
-      )
-    }
-  }
-}
+  const lifetimes = wrapLifetimeHooks(APP_LIFETIMES, null, others)
 
-export function createApp(options: AppOption) {
-  const { setup } = options
-  const onLaunch = function (
-    this: WechatMiniprogram.App.Instance<AnyObject>,
-    launchOptions: LaunchOptions
-  ) {
-    appCore.isPending = true
-    const bindings: AnyObject = setup(launchOptions) || {}
-    appCore.isPending = false
-    if (bindings) {
-      Object.keys(bindings).forEach(key => {
-        this[key] = bindings[key]
-      })
-    }
-  }
-  appCore.isPending = false
+  const core = createCore(app).initHooks('App')
+  app[CORE_KEY] = core
+  setCurrentInstance(app as unknown as Instance)
+  const bindings =
+    core.scope.run(() => {
+      return setup()
+    }) || {}
+
+  core.bindings = bindings
+  app.context = bindings.context || {}
+  setCurrentInstance(null)
+
   return App({
-    [CORE_KEY]: appCore,
-    onLaunch,
-    ...wrapAppHooks(),
+    [CORE_KEY]: core,
+    ...bindings,
+    ...lifetimes,
   })
 }
-
-/**
- * ====== App Lifetime  ====
- */
-
-export const onAppShow = createAppHook('onShow')
-export const onAppHide = createAppHook('onHide')
-export const onAppError = createAppHook('onError')
-export const onAppPageNotFound = createAppHook('onPageNotFound')
-export const onAppUnhandledRejection = createAppHook('onUnhandledRejection')
-export const onAppThemeChange = createAppHook('onThemeChange')

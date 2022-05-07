@@ -1,5 +1,5 @@
 import { pauseTracking, resetTracking } from '@vue/reactivity'
-import { isPromise, isFunction } from './util'
+import { isPromise, isFunction } from './utils'
 import type { Instance } from './instance'
 import type { Func } from './types'
 
@@ -18,15 +18,10 @@ export const enum ErrorTypes {
   app_warn_handler = 'app warnHandler',
   function_ref = 'ref function',
   async_component_loader = 'async component loader',
-  scheduler = 'scheduler flush. This is likely a internals bug. Please open an issue at gitlab',
+  scheduler = 'scheduler flush',
 }
 
-export function callWithErrorHandling(
-  fn: Function,
-  instance: Instance | null,
-  type: ErrorTypes,
-  args?: unknown[]
-) {
+export function callWithErrorHandling(fn: Function, instance: Instance | null, type: ErrorTypes, args?: unknown[]) {
   let res
   try {
     res = args ? fn(...args) : fn()
@@ -37,26 +32,26 @@ export function callWithErrorHandling(
 }
 
 export function callWithAsyncErrorHandling(
-  fn: Func | Func[],
+  fn: Func[] | Func,
   instance: Instance | null,
   type: ErrorTypes,
   args?: unknown[]
 ): any[] {
-  if (isFunction(fn)) {
-    const res = callWithErrorHandling(fn, instance, type, args)
-    if (res && isPromise(res)) {
-      res.catch((err: Error) => {
-        handleError(err, instance, type)
-      })
+  if (Array.isArray(fn)) {
+    const values: any[] = []
+    for (let i = 0; i < fn.length; i++) {
+      values.push(callWithAsyncErrorHandling(fn[i], instance, type, args))
     }
-    return res
+    return values
   }
 
-  const values = []
-  for (let i = 0; i < fn.length; i++) {
-    values.push(callWithAsyncErrorHandling(fn[i], instance, type, args))
+  const res = callWithErrorHandling(fn, instance, type, args)
+  if (res && isPromise(res)) {
+    res.catch((err: Error) => {
+      handleError(err, instance, type)
+    })
   }
-  return values
+  return res
 }
 
 export function handleError(err: Error, instance: Instance | null, type: ErrorTypes) {
@@ -70,9 +65,9 @@ export function handleError(err: Error, instance: Instance | null, type: ErrorTy
 
 export function error(err: Error, instance?: Instance | null, type?: ErrorTypes) {
   if (type) {
-    warn(`未处理的执行时错误 ${type}`, instance)
+    warn(`未处理的错误 ${type}`, instance)
   }
-  err.message = `[Jweapp]: ${err.message}`
+  err.message = `[core]: ${err.message}`
   if (instance) {
     err.message += ` | instance: ${instance.is}`
   }
@@ -88,7 +83,7 @@ export function warn(msg: string, instance?: Instance | null) {
   // during patch, leading to infinite recursion.
   pauseTracking()
 
-  let message = `[Jweapp]: ${msg}`
+  let message = `[core]: ${msg}`
   if (instance) {
     message += ` | instance: ${instance.is}`
   }

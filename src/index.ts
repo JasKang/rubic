@@ -1,48 +1,101 @@
 export {
-  ref,
+  // Core
   reactive,
-  toRaw,
+  ref,
+  readonly,
+  shallowRef,
+  triggerRef,
+  // Utilities
+  unref,
+  isRef,
   toRef,
   toRefs,
+  isProxy,
+  isReactive,
+  isReadonly,
+  effectScope,
+  EffectScope,
+  ITERATE_KEY,
+  // Advanced
+  markRaw,
+  toRaw,
   computed,
-  readonly,
-  shallowReadonly,
-  shallowReactive,
-  ComputedRef,
-  Ref,
+  // type
+  ReactiveEffect,
+  TrackOpTypes,
+  TriggerOpTypes,
 } from '@vue/reactivity'
-export {
-  createApp,
-  AppOption,
-  onAppShow,
-  onAppHide,
-  onAppError,
-  onAppPageNotFound,
-  onAppUnhandledRejection,
-  onAppThemeChange,
-} from './app'
-export { defineComponent, definePage } from './component'
-export { getCurrentInstance, CustomPageContext, CustomComponentContext } from './instance'
+export type {
+  ReactiveEffectOptions,
+  DebuggerEvent,
+  Ref,
+  ComputedRef,
+  WritableComputedRef,
+  UnwrapRef,
+  ShallowUnwrapRef,
+  WritableComputedOptions,
+  ToRefs,
+  DeepReadonly,
+} from '@vue/reactivity'
+
+export { watch, watchEffect, watchPostEffect, watchSyncEffect } from './watch'
+export { nextTick } from './scheduler'
 export { CORE_KEY } from './constants'
-export { watch, watchEffect } from './watch'
+export { provide, inject } from './inject'
+export type { InjectionKey } from './inject'
+export { getCurrentInstance } from './instance'
+export type {
+  // type
+  Core,
+  Instance,
+  PageInstance,
+  ComponentInstance,
+  InstanceType,
+  AppCustomContext,
+  PageCustomContext,
+  ComponentCustomContext,
+} from './instance'
+export { createApp, getAppContext } from './app'
+export type {
+  // type
+  AppOptions,
+} from './app'
+export { definePage } from './page'
+export { defineComponent } from './component'
+export { router } from './router'
+export { useMiddleware } from './middleware'
+export type {
+  // type
+  Middleware,
+  OptionsProcess,
+  SetupProcess,
+} from './middleware'
 
 export {
-  //
-  onReady,
-  onMoved,
-  onDetached,
+  // app
+  onLaunch,
+  onAppShow,
+  onAppHide,
+  onPageNotFound,
+  onUnhandledRejection,
+  onThemeChange,
   onError,
-  //
+  // page
   onShow,
   onHide,
-  onResize,
-  //
   onLoad,
+  onResize,
+  onReady,
   onUnload,
   onPullDownRefresh,
   onReachBottom,
-  onPageScroll,
   onShareAppMessage,
   onShareTimeline,
   onAddToFavorites,
+  onPageScroll,
+  onTabItemTap,
+  onSaveExitState,
+  // component
+  onMoved,
+  onDetached,
 } from './lifetimes'

@@ -4,20 +4,10 @@ export type Data = Record<string, unknown>
 
 export type AnyObject = Record<string, any>
 
-export type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never
-
-export type ExpandRecursively<T> = T extends object
-  ? T extends infer O
-    ? { [K in keyof O]: ExpandRecursively<O[K]> }
-    : never
-  : T
-
 export type LooseRequired<T> = { [P in string & keyof T]: T[P] }
 
 export type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N
 
-export type FlatType<T> = T extends Func
-  ? T
-  : T extends object
-  ? { [K in keyof T]: FlatType<T[K]> }
-  : T
+export type Flat<T> = T extends Func ? T : T extends object ? { [K in keyof T]: T[K] } : T
+
+export type FlatDeep<T> = T extends Func ? T : T extends object ? { [K in keyof T]: FlatDeep<T[K]> } : T

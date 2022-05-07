@@ -1,10 +1,12 @@
 import type { RootComponent } from 'j-component'
 import jComponent from 'j-component'
+import type { Core, CORE_KEY } from '../../src'
+import { isFunction } from '../../src/utils'
 import { sleep } from './utils'
 
 type RenderOptions = {
   id?: string
-  template: string
+  template?: string
   path?: string
   usingComponents?: Record<string, string>
   props?: Record<string, any>
@@ -14,17 +16,18 @@ type MockRootComponent = RootComponent<
   Record<string, any>,
   Record<string, WechatMiniprogram.Component.AllProperty>,
   Record<string, any>
->
+> & {
+  [CORE_KEY]: Core
+}
 
-// @ts-ignore
-global.App = (options: any) => {
-  return options
+declare global {
+  function setCurrentRender(options: RenderOptions): void
 }
 
 export async function launchApp(create: () => void) {
   const app = create() as unknown as WechatMiniprogram.App.Instance<Record<string, any>>
   app.onLaunch({
-    path: '/pages/home',
+    path: '/pages/test',
     query: {
       query1: 'query1',
     },
@@ -32,24 +35,6 @@ export async function launchApp(create: () => void) {
     shareTicket: 'ticket',
   })
   return app
-}
-let tempLoad: RenderOptions | null = null
-/**
- * 自定义组件构造器
- */
-// @ts-ignore
-global.Component = (options: any) => {
-  const component = tempLoad!
-  const definition = Object.assign(
-    {
-      id: component.id,
-      path: component.path,
-      template: component.template,
-      usingComponents: component.usingComponents,
-    },
-    options
-  )
-  jComponent.register(definition)
 }
 
 /**
@@ -66,32 +51,52 @@ function getId() {
     .join('')
 }
 
-export async function renderPage(options: RenderOptions, define: () => void) {
-  options.id = options.id || getId()
-  tempLoad = options
+export async function renderPage(define: () => void): Promise<MockRootComponent>
+export async function renderPage(options: RenderOptions, define: () => void): Promise<MockRootComponent>
+export async function renderPage(
+  _defineOrOptions: RenderOptions | (() => void),
+  _define?: () => void
+): Promise<MockRootComponent> {
+  const options = { id: getId(), template: '<div></div>', props: {} }
+  let define = _define!
+  if (isFunction(_defineOrOptions)) {
+    define = _defineOrOptions
+  } else {
+    Object.assign(options, _defineOrOptions)
+  }
+  setCurrentRender(options)
   define()
-  const root: MockRootComponent = jComponent.create(options.id, options.props)
+  const root = jComponent.create(options.id, options.props) as MockRootComponent
   const parent = document.createElement(`${options.id}-wrapper`)
   root.attach(parent)
   root.instance.onLoad(options.props)
+
   await sleep(10)
   // @ts-ignore
-  root.triggerPageLifeTime('show')
+  root.instance.onShow()
   await sleep(10)
   root.instance.onReady()
   return root
 }
-
-export async function renderComponent(options: RenderOptions, define: () => void) {
-  options.id = options.id || getId()
-  tempLoad = options
+export type MockComponent = RootComponent<
+  {
+    [x: string]: any
+  },
+  { [x: string]: any },
+  {
+    [x: string]: Function
+  }
+>
+export async function renderComponent(define: () => void): Promise<MockComponent>
+export async function renderComponent(options: RenderOptions, define: () => void): Promise<MockComponent>
+export async function renderComponent(_options: any, _define?: () => void): Promise<MockComponent> {
+  const define = typeof _define === 'function' ? _define : _options
+  const options = Object.assign({ id: getId() }, typeof _options === 'object' ? _options : {})
+  setCurrentRender(options)
   define()
-  const root = jComponent.create(options.id, options.props)
-  // @ts-ignore
-  root.render = () => {
-    root.attach(document.createElement(`${options.id}-wrapper`))
-  }
-  return root as MockRootComponent & {
-    render: () => void
-  }
+  const root: MockComponent = jComponent.create(options.id, options.props)
+  root.attach(document.createElement(`${options.id}-wrapper`))
+  // root.instance.page
+  await sleep(10)
+  return Promise.resolve(root)
 }

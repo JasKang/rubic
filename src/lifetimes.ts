@@ -1,33 +1,59 @@
 import type { HookType } from './constants'
-import { PAGE_ON_METHODS, CORE_KEY, COMPONENT_LIFETIMES, PAGE_LIFETIMES } from './constants'
-import type { ComponentInstance } from './instance'
+import {
+  COMPONENT_METHOD_LIFETIMES,
+  APP_LIFETIMES,
+  CORE_KEY,
+  COMPONENT_LIFETIMES,
+  COMPONENT_PAGE_LIFETIMES,
+  PAGE_LIFETIMES,
+} from './constants'
+import type { Core, Instance, InstanceType } from './instance'
 import { getCurrentInstance } from './instance'
 import { error } from './errorHandling'
 import type { Func } from './types'
-import { arrayToRecord, firstToUpper } from './util'
+import { firstToLower, keysToRecord } from './utils'
 
-type AllHook = HookType['Lifetime'] | HookType['PageLifetime'] | HookType['Method']
+type AllHook = HookType[keyof HookType]
 
-function isLifetimeType(key: string): key is HookType['Lifetime'] {
-  return COMPONENT_LIFETIMES.indexOf(key as typeof COMPONENT_LIFETIMES[number]) >= 0
+function isAppLt(key: string): key is HookType['App'] {
+  return APP_LIFETIMES.indexOf(key as typeof APP_LIFETIMES[number]) >= 0
 }
-function isPageLifetimeType(key: string): key is HookType['PageLifetime'] {
+function isPageLt(key: string): key is HookType['Page'] {
   return PAGE_LIFETIMES.indexOf(key as typeof PAGE_LIFETIMES[number]) >= 0
 }
-function isPageMethodType(key: string): key is HookType['Method'] {
-  return PAGE_ON_METHODS.indexOf(key as typeof PAGE_ON_METHODS[number]) >= 0
+function isComponentLt(key: string): key is HookType['Component'] {
+  return COMPONENT_LIFETIMES.indexOf(key as typeof COMPONENT_LIFETIMES[number]) >= 0
 }
-
-export function wrapHooks<T extends readonly string[]>(
-  scope: 'lifetimes' | 'pageLifetimes' | 'methods',
-  funcKeys: T
+function isComponentPageLt(key: string): key is HookType['ComponentPage'] {
+  return COMPONENT_PAGE_LIFETIMES.indexOf(key as typeof COMPONENT_PAGE_LIFETIMES[number]) >= 0
+}
+function isComponentMethodLt(key: string): key is HookType['ComponentMethod'] {
+  return COMPONENT_METHOD_LIFETIMES.indexOf(key as typeof COMPONENT_METHOD_LIFETIMES[number]) >= 0
+}
+export function wrapLifetimeHooks<T extends readonly string[]>(
+  keys: T,
+  scope: 'lifetimes' | 'pageLifetimes' | 'methods' | null,
+  originLifetimes: Record<string, any> = {}
 ): { [key in T[number]]: Func } {
-  const lifeTimes = arrayToRecord<T, Func>(funcKeys, funcKey => {
-    return function (this: ComponentInstance, ...args: unknown[]) {
-      const core = this[CORE_KEY]
-      const hooks = (core.hooks[scope] as any)[funcKey] || []
+  const lifeTimes = keysToRecord<T, Func>(keys, key => {
+    return function (this: any, ...args: unknown[]) {
+      const core = this[CORE_KEY] as Core
+
+      // @ts-ignore
+      const lifeTimes: Func[] = (scope ? core.hooks[scope]?.[key] : core.hooks[key]) || []
+
+      let orgLt = null
+      if (scope) {
+        orgLt = originLifetimes[scope]?.[key] || null
+      } else {
+        orgLt = originLifetimes[key] || null
+      }
+      if (orgLt) {
+        lifeTimes.push(orgLt)
+      }
+
       let ret: unknown = undefined
-      hooks.forEach((func: Func) => {
+      lifeTimes.forEach(func => {
         ret = func(...args)
       })
       return ret
@@ -36,70 +62,128 @@ export function wrapHooks<T extends readonly string[]>(
   return lifeTimes
 }
 
-function getLifetimeHooks(lifetime: AllHook) {
-  const ins = getCurrentInstance()
+function getLifetimeHooks(lifetime: AllHook, scopes: InstanceType[], ins: Instance) {
   let key: AllHook = lifetime
-  if (ins) {
-    const isPage = ins[CORE_KEY].isPage
-    const overwriteKey = `on${firstToUpper(key)}`
-    if (isPage && isPageMethodType(overwriteKey)) {
-      key = overwriteKey
-    }
-    if (isLifetimeType(key)) {
-      return ins[CORE_KEY].hooks.lifetimes[key]
-    } else if (isPageLifetimeType(key)) {
-      return ins[CORE_KEY].hooks.pageLifetimes[key]
-    } else {
-      if (isPage) {
-        return ins[CORE_KEY].hooks.methods[key]
-      } else {
-        return `当前实例是组件 无法创建 Page 钩子:${key}.`
-      }
-    }
+
+  if (scopes.indexOf(ins[CORE_KEY].type) === -1) {
+    return `${ins[CORE_KEY].type} 不存在 ${key} 钩子.`
+  }
+  const type = ins[CORE_KEY].type
+  if (type === 'App') {
+    return isAppLt(key) ? ins[CORE_KEY].hooks[key] : `App 不存在 ${key} 钩子.`
+  } else if (type === 'Page') {
+    return isPageLt(key) ? ins[CORE_KEY].hooks[key] : `Page 不存在 ${key} 钩子.`
   } else {
-    return `当前没有实例 无法创建${key}钩子.`
+    const tempKey = firstToLower(key.substring(2)) as AllHook
+    if (isComponentLt(tempKey) || isComponentPageLt(tempKey)) {
+      key = tempKey
+    }
+    if (isComponentLt(key)) {
+      // @ts-ignore
+      return ins[CORE_KEY].hooks.lifetimes[key]
+    } else if (isComponentPageLt(key)) {
+      // @ts-ignore
+      return ins[CORE_KEY].hooks.pageLifetimes[key]
+    } else if (isComponentMethodLt(key)) {
+      // @ts-ignore
+      return ins[CORE_KEY].hooks.methods[key]
+    }
+    return `Component 不存在 ${key} 钩子.`
   }
 }
 
-function createHook<T extends Func>(lifetime: AllHook, wrapFunc?: (func: T) => ReturnType<T>) {
-  return (hook: T): void => {
-    const hooks = getLifetimeHooks(lifetime)
-    if (Array.isArray(hooks)) {
-      hooks.push(wrapFunc || hook)
+function createHook<T extends Func>(
+  lifetime: AllHook,
+  scope: InstanceType | InstanceType[],
+  options: {
+    validator?: (ins: Instance, lifetime: string) => void | string
+    // before?: (func: T) => ReturnType<T>
+    // after?: (func: T) => ReturnType<T>
+  } = {}
+) {
+  const scopes = Array.isArray(scope) ? scope : [scope]
+  // TODO: 拓展钩子
+  const { validator } = options
+  // console.log(before, after);
+
+  return (hook: T) => {
+    const ins = getCurrentInstance()
+    if (!ins) {
+      return error(new Error(`当前没有实例 无法创建 ${lifetime} 钩子.`))
+    }
+
+    const err = validator ? validator(ins, lifetime) : false
+    if (err) {
+      return error(new Error(err))
+    }
+
+    const hooksOrError = getLifetimeHooks(lifetime, scopes, ins)
+    if (Array.isArray(hooksOrError)) {
+      hooksOrError.push(hook)
     } else {
-      error(new Error(hooks))
+      error(new Error(hooksOrError))
     }
   }
 }
 
 /**
- * ====== Lifetime  ====
+ * ====== App Lifetime ====
  */
-
-export const onReady = createHook('ready')
-export const onMoved = createHook('moved')
-export const onDetached = createHook('detached')
-export const onError = createHook('error')
+type IAppLt = Required<WechatMiniprogram.App.Option>
+export const onLaunch = createHook<IAppLt['onLaunch']>('onLaunch', 'App')
+export const onAppShow = createHook<IAppLt['onShow']>('onShow', 'App')
+export const onAppHide = createHook<IAppLt['onHide']>('onHide', 'App')
+export const onPageNotFound = createHook<IAppLt['onPageNotFound']>('onPageNotFound', 'App')
+export const onUnhandledRejection = createHook<IAppLt['onUnhandledRejection']>('onUnhandledRejection', 'App')
+export const onThemeChange = createHook<IAppLt['onThemeChange']>('onThemeChange', 'App')
+export const onError = createHook<IAppLt['onError']>('onError', ['App', 'Component'])
 
 /**
- * ====== PageLifetime  ====
+ * ====== Page Lifetime ====
  */
+type IPageLt = Required<WechatMiniprogram.Page.ILifetime>
+export const onLoad = createHook<IPageLt['onLoad']>('onLoad', ['Page'])
+export const onUnload = createHook<IPageLt['onUnload']>('onUnload', 'Page')
+export const onShow = createHook<IPageLt['onShow']>('onShow', ['Page', 'Component']) // 同 App
+export const onHide = createHook<IPageLt['onHide']>('onHide', ['Page', 'Component'])
+export const onResize = createHook<IPageLt['onResize']>('onResize', ['Page', 'Component'])
+export const onReady = createHook<IPageLt['onReady']>('onReady', ['Page', 'Component'])
 
-export const onShow = createHook('show')
-export const onHide = createHook('hide')
-export const onResize = createHook('resize')
+export const onPullDownRefresh = createHook<IPageLt['onPullDownRefresh']>('onPullDownRefresh', 'Page')
+export const onReachBottom = createHook<IPageLt['onReachBottom']>('onReachBottom', 'Page')
+export const onAddToFavorites = createHook<IPageLt['onAddToFavorites']>('onAddToFavorites', 'Page')
+export const onTabItemTap = createHook<IPageLt['onTabItemTap']>('onTabItemTap', 'Page')
+export const onSaveExitState = createHook<() => { data: any; expireTimeStamp: number }>('onSaveExitState', 'Page')
+export const onShareAppMessage = createHook<IPageLt['onShareAppMessage']>('onShareAppMessage', 'Page', {
+  validator: ins =>
+    ins[CORE_KEY].options.enableShareAppMessage
+      ? ''
+      : 'onShareAppMessage 函数只有在 enableShareAppMessage 配置为 true 的时候才能使用',
+})
+export const onShareTimeline = createHook<IPageLt['onShareTimeline']>('onShareTimeline', 'Page', {
+  validator: ins =>
+    ins[CORE_KEY].options.enableShareTimeline
+      ? ''
+      : 'onShareTimeline 函数只有在 enableShareTimeline 配置为 true 的时候才能使用',
+})
+export const onPageScroll = createHook<IPageLt['onPageScroll']>('onPageScroll', 'Page', {
+  validator: ins =>
+    ins[CORE_KEY].options.enablePageScroll ? '' : 'onPageScroll 函数只有在 enablePageScroll 配置为 true 的时候才能使用',
+})
 
 /**
- * ====== Method  ====
+ * ====== Component Lifetime  ====
+ */
+type CLt = Required<WechatMiniprogram.Component.Lifetimes['lifetimes']>
+// export const onError = createHook('error', 'Component') // 同 App
+// export const onReady = createHook('ready') // 同 Page
+export const onMoved = createHook<CLt['moved']>('moved', 'Component')
+export const onDetached = createHook<CLt['detached']>('detached', 'Component')
+
+/**
+ * ====== Component PageLifetime  ====
  */
 
-export const onLoad = createHook('onLoad')
-// export const onReady = createHook('onReady') // Lifetime 公用
-export const onUnload = createHook('onUnload')
-export const onPullDownRefresh = createHook('onPullDownRefresh')
-export const onReachBottom = createHook('onReachBottom')
-export const onPageScroll = createHook('onPageScroll')
-// export const onResize = createHook('onResize') // PageLifetime 公用
-export const onShareAppMessage = createHook('onShareAppMessage')
-export const onShareTimeline = createHook('onShareTimeline')
-export const onAddToFavorites = createHook('onAddToFavorites')
+// export const onShow = createHook('show') // 同 Page
+// export const onHide = createHook('hide') // 同 Page
+// export const onResize = createHook('resize') // 同 Page

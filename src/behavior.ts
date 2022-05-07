@@ -1,3 +1,1 @@
-export type Plugin = {
-  is: string
-}
+import type { ComponentInstance } from './instance'

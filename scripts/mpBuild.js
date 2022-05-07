@@ -1,7 +1,7 @@
-import { copy } from 'fs-extra'
-import { join } from 'path'
+const { join } = require('path')
+const { copy } = require('fs-extra')
 
-const resolvePath = (p: string) => {
+const resolvePath = p => {
   return join(__dirname, p)
 }
 async function mpBuild() {

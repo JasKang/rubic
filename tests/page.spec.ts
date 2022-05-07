@@ -1,6 +1,18 @@
-import { describe, expect, test } from 'vitest'
-import { mockConsole, renderPage, sleep } from './mock'
+import { describe, expect, test, vi } from 'vitest'
+import type { Core } from '../src'
 import {
+  onTabItemTap,
+  onAddToFavorites,
+  onShareTimeline,
+  onShareAppMessage,
+  onPageScroll,
+  onReachBottom,
+  onResize,
+  onPullDownRefresh,
+  onUnload,
+  onHide,
+  nextTick,
+  readonly,
   definePage,
   onDetached,
   onLoad,
@@ -14,50 +26,9 @@ import {
   CORE_KEY,
   watch,
 } from '../src'
-import type { Core } from '../src/instance'
+import { mockConsole, renderPage, sleep } from './mock'
 
-describe('page', () => {
-  test('lifetimes', async () => {
-    const calledKeys: string[] = []
-    const page = await renderPage(
-      { template: '<div id="text" bind:tap="tap">data: {{text}}</div>' },
-      () => {
-        definePage({
-          setup() {
-            calledKeys.push('onAttach')
-            onShow(() => {
-              calledKeys.push('onShow')
-            })
-            onReady(() => {
-              calledKeys.push('onReady')
-            })
-            onMoved(() => {
-              calledKeys.push('onMoved')
-            })
-            onDetached(() => {
-              calledKeys.push('onDetached')
-            })
-            onLoad(() => {
-              calledKeys.push('onLoad')
-            })
-            onReady(() => {
-              calledKeys.push('onReady 2')
-            })
-            onLoad(() => {
-              calledKeys.push('onLoad 2')
-            })
-            return {}
-          },
-        })
-      }
-    )
-    expect(calledKeys).toEqual(['onAttach', 'onLoad', 'onLoad 2', 'onShow', 'onReady', 'onReady 2'])
-    page.triggerLifeTime('moved')
-    expect(calledKeys[calledKeys.length - 1]).toEqual('onMoved')
-    page.detach()
-    expect(calledKeys[calledKeys.length - 1]).toEqual('onDetached')
-  })
-
+describe('page', async () => {
   test('reactive binding', async () => {
     const page = await renderPage(
       {
@@ -99,9 +70,140 @@ describe('page', () => {
     )
     await sleep(10)
     expect(console.error).toBeCalledWith(
-      `[Jweapp]: 错误的数据类型 sym:[object Symbol], 小程序 data 仅支持 string | number | boolean | object | array 类型. | instance: id`
+      `[core]: 错误的数据类型 sym:[object Symbol], 小程序 data 仅支持可以转成 JSON 的类型(string | number | boolean | object | array) | instance: id`
     )
     resetConsole()
+  })
+
+  test('readonly binding', async () => {
+    const page = await renderPage(() =>
+      definePage({
+        setup() {
+          const state = readonly({ count: 0 })
+          return { state }
+        },
+      })
+    )
+
+    expect(page.data.state).toEqual({ count: 0 })
+  })
+
+  test('array binding', async () => {
+    const page = await renderPage(() =>
+      definePage({
+        setup() {
+          const count = ref(0)
+          const double = computed(() => count.value * 2)
+          const increment = (): void => {
+            count.value++
+          }
+
+          return {
+            arr: [count, double],
+            increment,
+          }
+        },
+      })
+    )
+
+    expect(page.data.arr).toEqual([0, 0])
+    page.instance.increment()
+    await nextTick()
+    expect(page.data.arr).toEqual([1, 2])
+  })
+
+  test('object binding', async () => {
+    const page = await renderPage(() =>
+      definePage({
+        setup() {
+          const count = ref(0)
+          const double = computed(() => count.value * 2)
+          const increment = (): void => {
+            count.value++
+          }
+
+          return {
+            obj: { count, double },
+            increment,
+          }
+        },
+      })
+    )
+
+    expect(page.data.obj).toEqual({ count: 0, double: 0 })
+
+    page.instance.increment()
+    await nextTick()
+    expect(page.data.obj).toEqual({ count: 1, double: 2 })
+  })
+
+  test('unbundling', async () => {
+    const page = await renderPage(() =>
+      definePage({
+        setup() {
+          const count = ref(0)
+          const double = computed(() => count.value * 2)
+          const increment = (): void => {
+            count.value++
+          }
+
+          return {
+            count,
+            double,
+            increment,
+          }
+        },
+      })
+    )
+
+    expect(page.instance[CORE_KEY].scope.effects.length).toBe(4)
+
+    page.instance.increment()
+    page.instance.onUnload()
+    await nextTick()
+    expect(page.data.count).toBe(1)
+    expect(page.data.double).toBe(2)
+  })
+
+  test('watch', async () => {
+    let dummy: number
+    let stopper: () => void
+    const page = await renderPage(() =>
+      definePage({
+        setup() {
+          const count = ref(0)
+          const increment = (): void => {
+            count.value++
+          }
+
+          stopper = watchEffect(() => {
+            dummy = count.value
+          })
+          return {
+            count,
+            increment,
+          }
+        },
+      })
+    )
+    expect(page.instance[CORE_KEY].scope.effects.length).toBe(3)
+
+    await nextTick()
+    expect(dummy!).toBe(0)
+    expect(page.data.count).toBe(0)
+    // The other is `count` sync watcher
+
+    page.instance.increment()
+    await nextTick()
+    expect(dummy!).toBe(1)
+    expect(page.data.count).toBe(1)
+
+    stopper!()
+    page.instance.increment()
+    await nextTick()
+    expect(dummy!).toBe(1)
+    expect(page.data.count).toBe(2)
+    expect(page.instance[CORE_KEY].scope.effects.length).toBe(2)
   })
 
   test('watch/watchEffect', async () => {
@@ -149,5 +251,480 @@ describe('page', () => {
     expect(tempCount).toBe(2)
     expect(page.data.count).toBe(2)
     expect(core.scope.effects.length).toBe(3)
+  })
+
+  test('lifetimes', async () => {
+    const resetConsole = mockConsole()
+    const calledKeys: string[] = []
+    const page = await renderPage({ template: '<div id="text" bind:tap="tap">data: {{text}}</div>' }, () => {
+      definePage({
+        setup() {
+          calledKeys.push('onAttach')
+          onShow(() => {
+            calledKeys.push('onShow')
+          })
+          onReady(() => {
+            calledKeys.push('onReady')
+          })
+          onMoved(() => {
+            calledKeys.push('onMoved')
+          })
+          onDetached(() => {
+            calledKeys.push('onDetached')
+          })
+          onLoad(() => {
+            calledKeys.push('onLoad')
+          })
+          onReady(() => {
+            calledKeys.push('onReady 2')
+          })
+          onLoad(() => {
+            calledKeys.push('onLoad 2')
+          })
+          return {}
+        },
+      })
+    })
+    expect(calledKeys).toEqual(['onAttach', 'onLoad', 'onLoad 2', 'onShow', 'onReady', 'onReady 2'])
+    expect(console.error).toBeCalledWith(`[core]: Page 不存在 moved 钩子.`)
+    expect(console.error).toBeCalledWith(`[core]: Page 不存在 detached 钩子.`)
+    resetConsole()
+  })
+
+  test('lifecycle outside', async () => {
+    const resetConsole = mockConsole()
+    onShow(() => {})
+
+    expect(console.error).toHaveBeenLastCalledWith('[core]: 当前没有实例 无法创建 onShow 钩子.')
+    resetConsole()
+  })
+  test('onLoad', async () => {
+    const params = { query: 1 }
+    const onLoadFn = vi.fn()
+    const setup = vi.fn((query, context) => {
+      expect(context.is).toBe('')
+      expect(context.getOpenerEventChannel).toBeInstanceOf(Function)
+    })
+    const page = await renderPage({ props: params }, () =>
+      definePage({
+        onLoad: onLoadFn,
+        setup,
+      })
+    )
+
+    // page.instance.onLoad(arg)
+    expect(onLoadFn).toBeCalledWith(params)
+    expect(setup).toBeCalledTimes(1)
+  })
+
+  test('onReady', async () => {
+    const fn = vi.fn()
+    const injectedFn1 = vi.fn()
+    const injectedFn2 = vi.fn()
+    const page = await renderPage(() =>
+      definePage({
+        onReady: fn,
+        setup() {
+          onReady(() => {
+            injectedFn1()
+          })
+          onReady(injectedFn2)
+        },
+      })
+    )
+
+    expect(fn).toBeCalledTimes(1)
+    expect(injectedFn1).toBeCalledTimes(1)
+    expect(injectedFn2).toBeCalledTimes(1)
+  })
+
+  test('onShow', async () => {
+    const fn = vi.fn()
+    const injectedFn1 = vi.fn()
+    const injectedFn2 = vi.fn()
+    const page = await renderPage(() =>
+      definePage({
+        onShow: fn,
+        setup() {
+          onShow(injectedFn1)
+          onShow(injectedFn2)
+        },
+      })
+    )
+
+    expect(fn).toBeCalledTimes(1)
+    expect(injectedFn1).toBeCalledTimes(1)
+    expect(injectedFn2).toBeCalledTimes(1)
+  })
+
+  test('onHide', async () => {
+    const fn = vi.fn()
+    const injectedFn1 = vi.fn()
+    const injectedFn2 = vi.fn()
+    const page = await renderPage(() =>
+      definePage({
+        properties: {
+          query1: String,
+        },
+        onHide: fn,
+        setup(query) {
+          onHide(injectedFn1)
+          onHide(injectedFn2)
+        },
+      })
+    )
+
+    page.instance.onHide()
+    expect(fn).toBeCalledTimes(1)
+    expect(injectedFn1).toBeCalledTimes(1)
+    expect(injectedFn2).toBeCalledTimes(1)
+  })
+
+  test('onUnload', async () => {
+    const fn = vi.fn()
+    const injectedFn1 = vi.fn()
+    const injectedFn2 = vi.fn()
+    const page = await renderPage(() =>
+      definePage({
+        onUnload: fn,
+        setup() {
+          onUnload(injectedFn1)
+          onUnload(injectedFn2)
+        },
+      })
+    )
+
+    page.instance.onUnload()
+    expect(fn).toBeCalledTimes(1)
+    expect(injectedFn1).toBeCalledTimes(1)
+    expect(injectedFn2).toBeCalledTimes(1)
+  })
+
+  test('onPullDownRefresh', async () => {
+    const fn = vi.fn()
+    const injectedFn1 = vi.fn()
+    const injectedFn2 = vi.fn()
+    const page = await renderPage(() =>
+      definePage({
+        onPullDownRefresh: fn,
+        setup() {
+          onPullDownRefresh(injectedFn1)
+          onPullDownRefresh(injectedFn2)
+        },
+      })
+    )
+
+    page.instance.onPullDownRefresh()
+    expect(fn).toBeCalledTimes(1)
+    expect(injectedFn1).toBeCalledTimes(1)
+    expect(injectedFn2).toBeCalledTimes(1)
+  })
+
+  test('onReachBottom', async () => {
+    const fn = vi.fn()
+    const injectedFn1 = vi.fn()
+    const injectedFn2 = vi.fn()
+    const page = await renderPage(() =>
+      definePage({
+        onReachBottom: fn,
+        setup() {
+          onReachBottom(injectedFn1)
+          onReachBottom(injectedFn2)
+        },
+      })
+    )
+
+    page.instance.onReachBottom()
+    expect(fn).toBeCalledTimes(1)
+    expect(injectedFn1).toBeCalledTimes(1)
+    expect(injectedFn2).toBeCalledTimes(1)
+  })
+
+  test('onResize', async () => {
+    const arg = {}
+    const fn = vi.fn()
+    const injectedFn1 = vi.fn()
+    const injectedFn2 = vi.fn()
+
+    const page = await renderPage(() =>
+      definePage({
+        onResize: fn,
+        setup() {
+          onResize(injectedFn1)
+          onResize(injectedFn2)
+        },
+      })
+    )
+
+    page.instance.onResize(arg)
+    expect(fn).toBeCalledWith(arg)
+    expect(injectedFn1).toBeCalledWith(arg)
+    expect(injectedFn2).toBeCalledWith(arg)
+  })
+
+  test('onTabItemTap', async () => {
+    const arg = {}
+    const fn = vi.fn()
+    const injectedFn1 = vi.fn()
+    const injectedFn2 = vi.fn()
+    const page = await renderPage(() =>
+      definePage({
+        onTabItemTap: fn,
+        setup() {
+          onTabItemTap(injectedFn1)
+          onTabItemTap(injectedFn2)
+        },
+      })
+    )
+
+    page.instance.onTabItemTap(arg)
+    expect(fn).toBeCalledWith(arg)
+    expect(injectedFn1).toBeCalledWith(arg)
+    expect(injectedFn2).toBeCalledWith(arg)
+  })
+
+  test('onPageScroll', async () => {
+    const resetConsole = mockConsole()
+
+    renderPage(() =>
+      definePage({
+        setup() {
+          onPageScroll(() => {})
+        },
+      })
+    )
+
+    expect(console.error).toHaveBeenLastCalledWith(
+      '[core]: onPageScroll 函数只有在 enablePageScroll 配置为 true 的时候才能使用'
+    )
+
+    const arg = {}
+    const fn = vi.fn()
+    const injectedFn1 = vi.fn()
+    const injectedFn2 = vi.fn()
+    const page = await renderPage(() =>
+      definePage({
+        onPageScroll: fn,
+        setupOptions: {
+          enablePageScroll: true,
+        },
+        setup() {
+          onPageScroll(injectedFn1)
+          onPageScroll(injectedFn2)
+        },
+      })
+    )
+
+    page.instance.onPageScroll(arg)
+
+    expect(injectedFn1).toBeCalledTimes(1)
+    expect(injectedFn2).toBeCalledTimes(1)
+    expect(fn).toBeCalledTimes(1)
+
+    const injectedFn = vi.fn()
+    const page1 = await renderPage(() =>
+      definePage({
+        setupOptions: {
+          enablePageScroll: true,
+        },
+        setup() {
+          onPageScroll(injectedFn)
+        },
+      })
+    )
+
+    page1.instance.onPageScroll(arg)
+    expect(injectedFn).toBeCalledWith(arg)
+    resetConsole()
+  })
+
+  test('onShareAppMessage', async () => {
+    const resetConsole = mockConsole()
+
+    renderPage(() =>
+      definePage({
+        setup() {
+          onShareAppMessage(() => ({}))
+        },
+      })
+    )
+
+    expect(console.error).toHaveBeenLastCalledWith(
+      '[core]: onShareAppMessage 函数只有在 enableShareAppMessage 配置为 true 的时候才能使用'
+    )
+
+    renderPage(() =>
+      definePage({
+        setupOptions: {
+          enableShareAppMessage: true,
+        },
+        setup() {
+          onShareAppMessage(() => ({}))
+          onShareAppMessage(() => ({}))
+        },
+      })
+    )
+
+    const arg = {}
+    const fn = vi.fn(() => ({ title: 'test' }))
+    const page = await renderPage(() =>
+      definePage({
+        setupOptions: {
+          enableShareAppMessage: true,
+        },
+        setup() {
+          onShareAppMessage(fn)
+        },
+      })
+    )
+
+    const shareContent = page.instance.onShareAppMessage(arg)
+    expect(fn).toBeCalledTimes(1)
+    expect(shareContent).toEqual({ title: 'test' })
+
+    const page1 = await renderPage(() =>
+      definePage({
+        setupOptions: {
+          enableShareAppMessage: true,
+        },
+        setup() {},
+      })
+    )
+
+    expect(page1.instance.onShareAppMessage(arg)).toBeUndefined()
+    resetConsole()
+  })
+
+  test('onShareTimeline', async () => {
+    const resetConsole = mockConsole()
+
+    renderPage(() =>
+      definePage({
+        setup() {
+          onShareTimeline(() => ({}))
+          onShareTimeline(() => ({}))
+        },
+      })
+    )
+
+    expect(console.error).toHaveBeenLastCalledWith(
+      '[core]: onShareTimeline 函数只有在 enableShareTimeline 配置为 true 的时候才能使用'
+    )
+    let title = 0
+    const fn = vi.fn(() => ({ title: `${title++}` }))
+    const page = await renderPage(() =>
+      definePage({
+        setupOptions: {
+          enableShareTimeline: true,
+        },
+        setup() {
+          onShareTimeline(fn)
+          onShareTimeline(fn)
+        },
+      })
+    )
+
+    const shareContent = page.instance.onShareTimeline()
+    expect(fn).toBeCalledTimes(2)
+    expect(shareContent).toEqual({ title: '1' })
+    const page1 = await renderPage(() => definePage({ setup() {} }))
+
+    expect(page1.instance.onShareTimeline).toBeUndefined()
+    resetConsole()
+  })
+
+  test('onAddToFavorites', async () => {
+    const resetConsole = mockConsole()
+
+    renderPage(() =>
+      definePage({
+        setup() {
+          onAddToFavorites(() => ({}))
+          onAddToFavorites(() => ({}))
+        },
+      })
+    )
+
+    const arg = {}
+    const fn = vi.fn(() => ({ title: 'test' }))
+    const page = await renderPage(() =>
+      definePage({
+        setup() {
+          onAddToFavorites(fn)
+        },
+      })
+    )
+
+    const favoritesContent = page.instance.onAddToFavorites(arg)
+    expect(fn).toBeCalledWith(arg)
+    expect(favoritesContent).toEqual({ title: 'test' })
+
+    const page1 = await renderPage(() => definePage({ setup() {} }))
+    expect(page1.instance.onAddToFavorites(arg)).toBeUndefined()
+    resetConsole()
+  })
+
+  test('no setup', async () => {
+    const options = {}
+    const page = await renderPage(() => definePage(options))
+    expect(page).toBeInstanceOf(Object)
+  })
+
+  test('properties', async () => {
+    const resetConsole = mockConsole()
+    let query: Record<string, any> = {}
+    const page = await renderPage(
+      {
+        props: {
+          a: 'aaa',
+          b: '123',
+        },
+        path: '/test/test/page',
+      },
+      () =>
+        definePage({
+          properties: {
+            a: String,
+            b: String,
+          },
+          setup(props) {
+            query = props
+          },
+        })
+    )
+    expect(query.a).toBe('aaa')
+    expect(query.b).toBe('123')
+    expect(query.c).toBe(undefined)
+    query.c = 'c'
+    resetConsole()
+  })
+
+  test('queryProps', async () => {
+    const resetConsole = mockConsole()
+    let query: Record<string, any> = {}
+    const page = await renderPage(
+      {
+        props: {
+          a: 'aaa',
+          b: '123',
+        },
+        path: '/test/test/page',
+      },
+      () =>
+        definePage({
+          queryProps: {
+            a: { type: String },
+            b: String,
+          },
+          setup(props) {
+            // @ts-ignore
+            query = props
+          },
+        })
+    )
+    expect(query.a).toBe('aaa')
+    expect(query.b).toBe('123')
+    expect(query.c).toBe(undefined)
+    resetConsole()
   })
 })

@@ -1,3 +1,3 @@
 export { launchApp, renderPage, renderComponent } from './miniprogram'
-export { mockConsole } from './console'
+export { mockConsole, resetConsole } from './console'
 export { sleep } from './utils'
