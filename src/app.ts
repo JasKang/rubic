@@ -1,9 +1,9 @@
 import { APP_LIFETIMES, CORE_KEY } from './constants'
 import { error } from './errorHandling'
-import type { Expand, Func } from './types'
+import type { FlatType, Func } from './types'
 import { arrayToRecord } from './util'
 
-type LaunchOptions = Expand<WechatMiniprogram.App.LaunchShowOption>
+type LaunchOptions = FlatType<WechatMiniprogram.App.LaunchShowOption>
 
 export type AppOption = {
   setup: (options: LaunchOptions) => AnyObject | void

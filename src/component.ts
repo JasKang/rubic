@@ -4,7 +4,7 @@ import type { ComponentInstance, Instance, PageInstance } from './instance'
 import { createCore, setCurrentInstance } from './instance'
 import type { ComponentObjectPropsOptions, ComponentPropsOptions, ExtractPropTypes } from './props'
 import { convertToProperties } from './props'
-import type { Data, Expand } from './types'
+import type { Data, FlatType } from './types'
 import { bindingToData, isFunction } from './util'
 import { watchBinding, watchRender } from './bindings'
 import { wrapHooks } from './lifetimes'
@@ -66,7 +66,7 @@ type ComponentOptionsBase<P, I = false> = {
   setup: (
     this: void,
     props: P,
-    ctx: I extends true ? Expand<PageInstance> : Expand<ComponentInstance>
+    ctx: I extends true ? FlatType<PageInstance> : FlatType<ComponentInstance>
   ) => AnyObject | void
 }
 
@@ -85,7 +85,7 @@ type ComponentOptionsWithArrayProps<
 type ComponentOptionsWithObjectProps<
   PropsOptions = ComponentObjectPropsOptions,
   I = false,
-  P = Readonly<Expand<ExtractPropTypes<PropsOptions>>>
+  P = Readonly<FlatType<ExtractPropTypes<PropsOptions>>>
 > = ComponentOptionsBase<P, I> & {
   props: PropsOptions
 }

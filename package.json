@@ -55,7 +55,6 @@
     "jest": "^27.4.7",
     "lint-staged": "^12.2.2",
     "minimist": "^1.2.5",
-    "miniprogram-simulate": "^1.4.3",
     "picocolors": "^1.0.0",
     "prettier": "^2.5.1",
     "release-it": "^14.12.3",
