@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'vitest'
-import { defineConfig } from '../src'
 import { loadMiddlewares } from '../src/middleware'
 
 const middlewareArray: string[] = []

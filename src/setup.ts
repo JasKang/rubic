@@ -55,16 +55,15 @@ export function getContextProxy(ctx: Instance) {
 type setupBehaviorOptions = {
   properties: Record<string, any>
   setup?: (...args: any[]) => any
-  options?: Record<string, any>
 }
 
-export const setupBehavior = ({ properties = {}, setup, options = {} }: setupBehaviorOptions) => {
+export const setupBehavior = ({ properties = {}, setup }: setupBehaviorOptions) => {
   const propNames = Object.keys(properties)
   return Behavior({
     properties,
     lifetimes: {
       created(this: Instance) {
-        this[CORE_KEY] = createCore(this, options)
+        this[CORE_KEY] = createCore(this)
       },
       attached(this: Instance) {
         const ctx = this
@@ -103,11 +102,6 @@ export const setupBehavior = ({ properties = {}, setup, options = {} }: setupBeh
         }
         watchRender.call(ctx)
         setCurrentInstance(null)
-      },
-      detached(this: Instance) {
-        if (this[CORE_KEY].type === 'Page') {
-          this[CORE_KEY].scope.stop()
-        }
       },
     },
   })

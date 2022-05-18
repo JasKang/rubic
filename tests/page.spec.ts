@@ -295,35 +295,32 @@ describe('page', async () => {
     const resetConsole = mockConsole()
     onShow(() => {})
 
-    expect(console.error).toHaveBeenLastCalledWith('[core]: 当前没有实例 无法创建 onShow 钩子.')
+    expect(console.error).toHaveBeenLastCalledWith('[core]: 当前没有实例 无法创建 show 钩子.')
     resetConsole()
   })
   test('onLoad', async () => {
     const params = { query: 1 }
     const onLoadFn = vi.fn()
     const setup = vi.fn((query, context) => {
+      onLoad(onLoadFn)
       expect(context.is).toBe('')
       expect(context.getOpenerEventChannel).toBeInstanceOf(Function)
     })
     const page = await renderPage({ props: params }, () =>
       definePage({
-        onLoad: onLoadFn,
         setup,
       })
     )
 
-    // page.instance.onLoad(arg)
     expect(onLoadFn).toBeCalledWith(params)
     expect(setup).toBeCalledTimes(1)
   })
 
   test('onReady', async () => {
-    const fn = vi.fn()
     const injectedFn1 = vi.fn()
     const injectedFn2 = vi.fn()
     const page = await renderPage(() =>
       definePage({
-        onReady: fn,
         setup() {
           onReady(() => {
             injectedFn1()
@@ -332,41 +329,33 @@ describe('page', async () => {
         },
       })
     )
-
-    expect(fn).toBeCalledTimes(1)
+    // page.instance.onReady()
     expect(injectedFn1).toBeCalledTimes(1)
     expect(injectedFn2).toBeCalledTimes(1)
   })
 
   test('onShow', async () => {
-    const fn = vi.fn()
     const injectedFn1 = vi.fn()
     const injectedFn2 = vi.fn()
     const page = await renderPage(() =>
       definePage({
-        onShow: fn,
         setup() {
           onShow(injectedFn1)
           onShow(injectedFn2)
         },
       })
     )
-
-    expect(fn).toBeCalledTimes(1)
+    page.triggerPageLifeTime('show')
     expect(injectedFn1).toBeCalledTimes(1)
     expect(injectedFn2).toBeCalledTimes(1)
   })
 
   test('onHide', async () => {
-    const fn = vi.fn()
     const injectedFn1 = vi.fn()
     const injectedFn2 = vi.fn()
     const page = await renderPage(() =>
       definePage({
-        properties: {
-          query1: String,
-        },
-        onHide: fn,
+        properties: ['query1'],
         setup(query) {
           onHide(injectedFn1)
           onHide(injectedFn2)
@@ -374,19 +363,16 @@ describe('page', async () => {
       })
     )
 
-    page.instance.onHide()
-    expect(fn).toBeCalledTimes(1)
+    page.triggerPageLifeTime('hide')
     expect(injectedFn1).toBeCalledTimes(1)
     expect(injectedFn2).toBeCalledTimes(1)
   })
 
   test('onUnload', async () => {
-    const fn = vi.fn()
     const injectedFn1 = vi.fn()
     const injectedFn2 = vi.fn()
     const page = await renderPage(() =>
       definePage({
-        onUnload: fn,
         setup() {
           onUnload(injectedFn1)
           onUnload(injectedFn2)
@@ -395,18 +381,15 @@ describe('page', async () => {
     )
 
     page.instance.onUnload()
-    expect(fn).toBeCalledTimes(1)
     expect(injectedFn1).toBeCalledTimes(1)
     expect(injectedFn2).toBeCalledTimes(1)
   })
 
   test('onPullDownRefresh', async () => {
-    const fn = vi.fn()
     const injectedFn1 = vi.fn()
     const injectedFn2 = vi.fn()
     const page = await renderPage(() =>
       definePage({
-        onPullDownRefresh: fn,
         setup() {
           onPullDownRefresh(injectedFn1)
           onPullDownRefresh(injectedFn2)
@@ -415,18 +398,15 @@ describe('page', async () => {
     )
 
     page.instance.onPullDownRefresh()
-    expect(fn).toBeCalledTimes(1)
     expect(injectedFn1).toBeCalledTimes(1)
     expect(injectedFn2).toBeCalledTimes(1)
   })
 
   test('onReachBottom', async () => {
-    const fn = vi.fn()
     const injectedFn1 = vi.fn()
     const injectedFn2 = vi.fn()
     const page = await renderPage(() =>
       definePage({
-        onReachBottom: fn,
         setup() {
           onReachBottom(injectedFn1)
           onReachBottom(injectedFn2)
@@ -435,20 +415,17 @@ describe('page', async () => {
     )
 
     page.instance.onReachBottom()
-    expect(fn).toBeCalledTimes(1)
     expect(injectedFn1).toBeCalledTimes(1)
     expect(injectedFn2).toBeCalledTimes(1)
   })
 
   test('onResize', async () => {
     const arg = {}
-    const fn = vi.fn()
     const injectedFn1 = vi.fn()
     const injectedFn2 = vi.fn()
 
     const page = await renderPage(() =>
       definePage({
-        onResize: fn,
         setup() {
           onResize(injectedFn1)
           onResize(injectedFn2)
@@ -456,20 +433,17 @@ describe('page', async () => {
       })
     )
 
-    page.instance.onResize(arg)
-    expect(fn).toBeCalledWith(arg)
+    page.triggerPageLifeTime('resize', arg)
     expect(injectedFn1).toBeCalledWith(arg)
     expect(injectedFn2).toBeCalledWith(arg)
   })
 
   test('onTabItemTap', async () => {
     const arg = {}
-    const fn = vi.fn()
     const injectedFn1 = vi.fn()
     const injectedFn2 = vi.fn()
     const page = await renderPage(() =>
       definePage({
-        onTabItemTap: fn,
         setup() {
           onTabItemTap(injectedFn1)
           onTabItemTap(injectedFn2)
@@ -478,36 +452,16 @@ describe('page', async () => {
     )
 
     page.instance.onTabItemTap(arg)
-    expect(fn).toBeCalledWith(arg)
     expect(injectedFn1).toBeCalledWith(arg)
     expect(injectedFn2).toBeCalledWith(arg)
   })
 
   test('onPageScroll', async () => {
-    const resetConsole = mockConsole()
-
-    renderPage(() =>
-      definePage({
-        setup() {
-          onPageScroll(() => {})
-        },
-      })
-    )
-
-    expect(console.error).toHaveBeenLastCalledWith(
-      '[core]: onPageScroll 函数只有在 enablePageScroll 配置为 true 的时候才能使用'
-    )
-
     const arg = {}
-    const fn = vi.fn()
     const injectedFn1 = vi.fn()
     const injectedFn2 = vi.fn()
     const page = await renderPage(() =>
       definePage({
-        onPageScroll: fn,
-        setupOptions: {
-          enablePageScroll: true,
-        },
         setup() {
           onPageScroll(injectedFn1)
           onPageScroll(injectedFn2)
@@ -519,60 +473,17 @@ describe('page', async () => {
 
     expect(injectedFn1).toBeCalledTimes(1)
     expect(injectedFn2).toBeCalledTimes(1)
-    expect(fn).toBeCalledTimes(1)
-
-    const injectedFn = vi.fn()
-    const page1 = await renderPage(() =>
-      definePage({
-        setupOptions: {
-          enablePageScroll: true,
-        },
-        setup() {
-          onPageScroll(injectedFn)
-        },
-      })
-    )
-
-    page1.instance.onPageScroll(arg)
-    expect(injectedFn).toBeCalledWith(arg)
-    resetConsole()
+    expect(injectedFn1).toBeCalledWith(arg)
+    expect(injectedFn2).toBeCalledWith(arg)
   })
 
   test('onShareAppMessage', async () => {
-    const resetConsole = mockConsole()
-
-    renderPage(() =>
-      definePage({
-        setup() {
-          onShareAppMessage(() => ({}))
-        },
-      })
-    )
-
-    expect(console.error).toHaveBeenLastCalledWith(
-      '[core]: onShareAppMessage 函数只有在 enableShareAppMessage 配置为 true 的时候才能使用'
-    )
-
-    renderPage(() =>
-      definePage({
-        setupOptions: {
-          enableShareAppMessage: true,
-        },
-        setup() {
-          onShareAppMessage(() => ({}))
-          onShareAppMessage(() => ({}))
-        },
-      })
-    )
-
     const arg = {}
     const fn = vi.fn(() => ({ title: 'test' }))
     const page = await renderPage(() =>
       definePage({
-        setupOptions: {
-          enableShareAppMessage: true,
-        },
         setup() {
+          onShareAppMessage(() => ({}))
           onShareAppMessage(fn)
         },
       })
@@ -581,42 +492,13 @@ describe('page', async () => {
     const shareContent = page.instance.onShareAppMessage(arg)
     expect(fn).toBeCalledTimes(1)
     expect(shareContent).toEqual({ title: 'test' })
-
-    const page1 = await renderPage(() =>
-      definePage({
-        setupOptions: {
-          enableShareAppMessage: true,
-        },
-        setup() {},
-      })
-    )
-
-    expect(page1.instance.onShareAppMessage(arg)).toBeUndefined()
-    resetConsole()
   })
 
   test('onShareTimeline', async () => {
-    const resetConsole = mockConsole()
-
-    renderPage(() =>
-      definePage({
-        setup() {
-          onShareTimeline(() => ({}))
-          onShareTimeline(() => ({}))
-        },
-      })
-    )
-
-    expect(console.error).toHaveBeenLastCalledWith(
-      '[core]: onShareTimeline 函数只有在 enableShareTimeline 配置为 true 的时候才能使用'
-    )
     let title = 0
     const fn = vi.fn(() => ({ title: `${title++}` }))
     const page = await renderPage(() =>
       definePage({
-        setupOptions: {
-          enableShareTimeline: true,
-        },
         setup() {
           onShareTimeline(fn)
           onShareTimeline(fn)
@@ -627,24 +509,9 @@ describe('page', async () => {
     const shareContent = page.instance.onShareTimeline()
     expect(fn).toBeCalledTimes(2)
     expect(shareContent).toEqual({ title: '1' })
-    const page1 = await renderPage(() => definePage({ setup() {} }))
-
-    expect(page1.instance.onShareTimeline).toBeUndefined()
-    resetConsole()
   })
 
   test('onAddToFavorites', async () => {
-    const resetConsole = mockConsole()
-
-    renderPage(() =>
-      definePage({
-        setup() {
-          onAddToFavorites(() => ({}))
-          onAddToFavorites(() => ({}))
-        },
-      })
-    )
-
     const arg = {}
     const fn = vi.fn(() => ({ title: 'test' }))
     const page = await renderPage(() =>
@@ -658,16 +525,6 @@ describe('page', async () => {
     const favoritesContent = page.instance.onAddToFavorites(arg)
     expect(fn).toBeCalledWith(arg)
     expect(favoritesContent).toEqual({ title: 'test' })
-
-    const page1 = await renderPage(() => definePage({ setup() {} }))
-    expect(page1.instance.onAddToFavorites(arg)).toBeUndefined()
-    resetConsole()
-  })
-
-  test('no setup', async () => {
-    const options = {}
-    const page = await renderPage(() => definePage(options))
-    expect(page).toBeInstanceOf(Object)
   })
 
   test('properties', async () => {
@@ -683,10 +540,7 @@ describe('page', async () => {
       },
       () =>
         definePage({
-          properties: {
-            a: String,
-            b: String,
-          },
+          properties: ['a', 'b'],
           setup(props) {
             query = props
           },
@@ -712,10 +566,7 @@ describe('page', async () => {
       },
       () =>
         definePage({
-          queryProps: {
-            a: { type: String },
-            b: String,
-          },
+          properties: ['a', 'b'],
           setup(props) {
             // @ts-ignore
             query = props

@@ -4,7 +4,6 @@ import type { HookType } from './constants'
 import {
   CORE_KEY,
   APP_LIFETIMES,
-  PAGE_LIFETIMES,
   COMPONENT_LIFETIMES,
   COMPONENT_PAGE_LIFETIMES,
   COMPONENT_METHOD_LIFETIMES,
@@ -22,10 +21,8 @@ export type Core = {
   props: ShallowReactive<Record<string, any>>
   type: InstanceType
   isUnmounted: boolean
-  options: Record<string, any>
   hooks:
     | { [key in HookType['App']]?: Func[] }
-    | { [key in HookType['Page']]?: Func[] }
     | {
         lifetimes: {
           [key in HookType['Component']]: Func[]
@@ -34,7 +31,7 @@ export type Core = {
           [key in HookType['ComponentPage']]: Func[]
         }
         methods: {
-          [key in HookType['ComponentMethod']]: Func[]
+          [key in HookType['ComponentMethods']]: Func[]
         }
       }
   scope: EffectScope
@@ -83,12 +80,11 @@ export function getCurrentInstance() {
   return currentInstance
 }
 
-export function createCore(instance: any, options: Record<string, any> = {}): Core {
+export function createCore(instance: any): Core {
   const core: Core = {
     props: shallowReactive<Record<string, any>>({}),
     scope: new EffectScope(),
     type: 'Page' as InstanceType,
-    options,
     isUnmounted: false,
     hooks: {},
     bindings: {},
@@ -108,8 +104,6 @@ export function createCore(instance: any, options: Record<string, any> = {}): Co
       this.hooks =
         type === 'App'
           ? keysToRecord(APP_LIFETIMES, () => [])
-          : type === 'Page'
-          ? keysToRecord(PAGE_LIFETIMES, () => [])
           : {
               lifetimes: keysToRecord(COMPONENT_LIFETIMES, () => []),
               pageLifetimes: keysToRecord(COMPONENT_PAGE_LIFETIMES, () => []),

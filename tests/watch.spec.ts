@@ -1,15 +1,11 @@
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
-import type { DebuggerEvent, Instance } from '../src'
 import {
+  CORE_KEY,
+  type DebuggerEvent,
+  type Instance,
   ITERATE_KEY,
   watchSyncEffect,
   watchPostEffect,
-  TrackOpTypes,
-  CORE_KEY,
-  effectScope,
-  getCurrentInstance,
-  watch,
-  watchEffect,
   reactive,
   computed,
   nextTick,
@@ -17,6 +13,9 @@ import {
   defineComponent,
   shallowRef,
   triggerRef,
+  watchEffect,
+  watch,
+  getCurrentInstance,
 } from '../src'
 import { mockConsole, renderComponent, resetConsole, sleep } from './mock'
 

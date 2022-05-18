@@ -84,6 +84,7 @@ export function convertProps(props: ComponentPropsOptions) {
           _prop.type = t
           _prop.optionalTypes = ts
         }
+        // TODO: value 要不要处理
         properties[key] = _prop
       } else {
         properties[key] = {

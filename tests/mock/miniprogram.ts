@@ -18,6 +18,7 @@ type MockRootComponent = RootComponent<
   Record<string, any>
 > & {
   [CORE_KEY]: Core
+  triggerPageLifeTime: (name: string, ...args: any[]) => any
 }
 
 declare global {
@@ -73,9 +74,9 @@ export async function renderPage(
 
   await sleep(10)
   // @ts-ignore
-  root.instance.onShow()
+  root.triggerPageLifeTime('show')
   await sleep(10)
-  root.instance.onReady()
+  root.triggerLifeTime('ready')
   return root
 }
 export type MockComponent = RootComponent<

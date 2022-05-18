@@ -22,8 +22,6 @@ export {
   computed,
   // type
   ReactiveEffect,
-  TrackOpTypes,
-  TriggerOpTypes,
 } from '@vue/reactivity'
 export type {
   ReactiveEffectOptions,
@@ -44,8 +42,42 @@ export { CORE_KEY } from './constants'
 export { provide, inject } from './inject'
 export type { InjectionKey } from './inject'
 export { getCurrentInstance } from './instance'
+
+export { createApp, useApp } from './app'
+export { definePage } from './page'
+export { defineComponent } from './component'
+
+export {
+  // app
+  onAppLaunch,
+  onAppShow,
+  onAppHide,
+  onAppPageNotFound,
+  onAppUnhandledRejection,
+  onAppThemeChange,
+  onAppError,
+  // page
+  onLoad,
+  onUnload,
+  onShow,
+  onHide,
+  onResize,
+  onReady,
+  onPullDownRefresh,
+  onReachBottom,
+  onAddToFavorites,
+  onTabItemTap,
+  onSaveExitState,
+  onShareAppMessage,
+  onShareTimeline,
+  onPageScroll,
+  // component
+  onMoved,
+  onDetached,
+  onError,
+} from './lifetimes'
+
 export type {
-  // type
   Core,
   Instance,
   PageInstance,
@@ -55,47 +87,5 @@ export type {
   PageCustomContext,
   ComponentCustomContext,
 } from './instance'
-export { createApp, getAppContext } from './app'
-export type {
-  // type
-  AppOptions,
-} from './app'
-export { definePage } from './page'
-export { defineComponent } from './component'
-export { router } from './router'
-export { useMiddleware } from './middleware'
-export type {
-  // type
-  Middleware,
-  OptionsProcess,
-  SetupProcess,
-} from './middleware'
-
-export {
-  // app
-  onLaunch,
-  onAppShow,
-  onAppHide,
-  onPageNotFound,
-  onUnhandledRejection,
-  onThemeChange,
-  onError,
-  // page
-  onShow,
-  onHide,
-  onLoad,
-  onResize,
-  onReady,
-  onUnload,
-  onPullDownRefresh,
-  onReachBottom,
-  onShareAppMessage,
-  onShareTimeline,
-  onAddToFavorites,
-  onPageScroll,
-  onTabItemTap,
-  onSaveExitState,
-  // component
-  onMoved,
-  onDetached,
-} from './lifetimes'
+export type { AppOptions } from './app'
+export type { Plugin, PluginOptions, PluginSetup } from './plugin'

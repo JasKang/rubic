@@ -1,92 +1,48 @@
-import type { PageInstance } from './instance'
+import type { Instance, PageInstance } from './instance'
 import type { ComponentObjectPropsOptions, ComponentPropsOptions, ExtractPropTypes } from './props'
-import type { Flat, AnyObject, PageInnerOptions } from './types'
-import { PAGE_LIFETIMES } from './constants'
+import type { Flat, AnyObject } from './types'
 import { convertProps } from './props'
 import { wrapLifetimeHooks } from './lifetimes'
 import { setupBehavior } from './setup'
-import { loadMiddlewares } from './middleware'
+import { usePlugin } from './plugin'
+import type { StyleIsolation } from './component'
+import { COMPONENT_LIFETIMES, COMPONENT_METHOD_LIFETIMES, COMPONENT_PAGE_LIFETIMES, CORE_KEY } from './constants'
 
-type PageSetupOptions = {
-  enablePageScroll?: boolean
-  enableShareAppMessage?: boolean
-  enableShareTimeline?: boolean
-}
+export type PageStyleIsolation = StyleIsolation | 'page-isolated' | 'page-apply-shared' | 'page-shared'
 
-export function pageLifetimesFilter<T extends Record<string, any>>(
-  lifetimes: T,
-  setupOptions: Required<PageSetupOptions>
-): T {
-  if (!setupOptions.enablePageScroll) {
-    delete lifetimes['onPageScroll']
-  }
-  if (!setupOptions.enableShareAppMessage) {
-    delete lifetimes['onShareAppMessage']
-  }
-  if (!setupOptions.enableShareTimeline) {
-    delete lifetimes['onShareTimeline']
-  }
-  return lifetimes as T
+export type PageInnerOptions = {
+  /**
+   * 组件样式隔离
+   */
+  styleIsolation?: PageStyleIsolation
 }
 
 export type PageBaseOptions<P = {}> = {
-  // queryProps 兼容 properties
-  properties?: Record<string, any>
   behaviors?: string[]
   /**
    * 一些选项
    */
   options?: PageInnerOptions
-  data?: Record<string, any>
-  setupOptions?: PageSetupOptions
   setup: (this: void, props: P, ctx: PageInstance) => AnyObject | void
-} & { [key: string]: any } // 兼容
+}
 
-export type PageOptionsWithoutProps<P = {}> = Flat<
-  PageBaseOptions<P> & {
-    queryProps?: undefined
-  }
->
 export type PageOptionsWithArrayProps<
   PropNames extends string = string,
   P = Readonly<{ [key in PropNames]?: string }>
 > = PageBaseOptions<P> & {
-  queryProps: PropNames[]
-}
-export type PageOptionsWithObjectProps<
-  PropsOptions = ComponentObjectPropsOptions,
-  P = Readonly<Flat<ExtractPropTypes<PropsOptions>>>
-> = PageBaseOptions<P> & {
-  queryProps: PropsOptions
+  properties?: PropNames[]
 }
 
-export function definePage<P = {}>(options: PageOptionsWithoutProps<P>): void
-export function definePage<P extends string>(options: PageOptionsWithArrayProps<P>): void
-export function definePage<P extends Readonly<ComponentPropsOptions>>(options: PageOptionsWithObjectProps<P>): void
-export function definePage(
-  pageOptions: PageBaseOptions<AnyObject> & {
-    queryProps?: ComponentPropsOptions
-  }
-) {
-  const { setup, options } = loadMiddlewares(pageOptions, 'Page')
+export function definePage<P extends string>(pageOptions: PageOptionsWithArrayProps<P>): string {
+  const { setup, options } = usePlugin(pageOptions, 'Component')
 
-  const {
-    properties: propertiesOptions = {},
-    queryProps: propsOptions = {},
-    options: innerOptions,
-    setupOptions: userSetupOptions = {},
-    behaviors = [],
-    ...others
-  } = options
+  const { properties: propsOptions = {}, options: innerOptions, behaviors = [] } = options
 
-  const properties = convertProps(Object.assign({}, propertiesOptions, propsOptions))
+  const properties = convertProps(propsOptions)
 
-  const setupOptions = Object.assign(
-    { enableShareAppMessage: false, enableShareTimeline: false, enablePageScroll: false },
-    userSetupOptions
-  )
-
-  const lifetimes = pageLifetimesFilter(wrapLifetimeHooks(PAGE_LIFETIMES, null, others), setupOptions)
+  const { detached, ...lifetimes } = wrapLifetimeHooks(COMPONENT_LIFETIMES, 'lifetimes')
+  const pageLifetimes = wrapLifetimeHooks(COMPONENT_PAGE_LIFETIMES, 'pageLifetimes')
+  const methodsLifetimes = wrapLifetimeHooks(COMPONENT_METHOD_LIFETIMES, 'methods', {})
 
   const sourceOptions = {
     behaviors: [
@@ -95,12 +51,33 @@ export function definePage(
       setupBehavior({
         properties,
         setup,
-        options: setupOptions,
       }),
     ],
-    options: innerOptions,
-    ...others,
-    ...lifetimes,
+    options: Object.assign(
+      {
+        multipleSlots: true,
+      },
+      innerOptions
+    ),
+    // externalClasses,
+    // relations,
+    // ...others,
+    lifetimes: {
+      detached(this: Instance) {
+        detached.call(this)
+        this[CORE_KEY].scope.stop()
+      },
+      ...lifetimes,
+    },
+    pageLifetimes,
+    methods: {
+      // ...methods,
+      ...methodsLifetimes,
+    },
   }
-  return Page(sourceOptions)
+  if (__TEST__) {
+    // @ts-ignore
+    sourceOptions.__IS_PAGE__ = true
+  }
+  return Component(sourceOptions)
 }

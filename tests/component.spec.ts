@@ -1,5 +1,4 @@
 import { describe, expect, test } from 'vitest'
-import { mockConsole, renderComponent, sleep } from './mock'
 import {
   onDetached,
   onMoved,
@@ -14,6 +13,7 @@ import {
   defineComponent,
 } from '../src'
 import type { Core } from '../src/instance'
+import { mockConsole, renderComponent, sleep } from './mock'
 
 describe('component', () => {
   test('lifetimes', async () => {

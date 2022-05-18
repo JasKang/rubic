@@ -20,7 +20,7 @@
     "allowJs": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext", "DOM"],
     "paths": {
       "rubic": ["./scr/index.ts"],
       "/@theme/*": [".vitepress/theme/*"]

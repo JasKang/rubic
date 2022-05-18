@@ -1,5 +1,5 @@
 import { pauseTracking, resetTracking } from '@vue/reactivity'
-import { isPromise, isFunction } from './utils'
+import { isArray, isPromise } from './utils'
 import type { Instance } from './instance'
 import type { Func } from './types'
 
@@ -37,7 +37,7 @@ export function callWithAsyncErrorHandling(
   type: ErrorTypes,
   args?: unknown[]
 ): any[] {
-  if (Array.isArray(fn)) {
+  if (isArray(fn)) {
     const values: any[] = []
     for (let i = 0; i < fn.length; i++) {
       values.push(callWithAsyncErrorHandling(fn[i], instance, type, args))

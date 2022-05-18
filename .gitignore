@@ -6,23 +6,15 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# Coverage directory used by tools like istanbul
-coverage
-*.lcov
+# IDE
+.idea/*
 
-# Dependency directories
+# deps
 node_modules/
 
-
-# dotenv environment variables file
-.env
-.env.test
-
-.cache
-
-# vuepress build output
+# build output
 .vuepress/dist
+.cache
 .temp
-
 temp
 dist

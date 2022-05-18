@@ -1,43 +1,41 @@
-import { readonly } from '@vue/reactivity'
 import type { AppCustomContext, Instance } from './instance'
 import { createCore, setCurrentInstance } from './instance'
 import { wrapLifetimeHooks } from './lifetimes'
 import { APP_LIFETIMES, CORE_KEY } from './constants'
+import { registerPlugins, type Plugin } from './plugin'
 
-export type AppOptions = Partial<WechatMiniprogram.App.Option> & {
+export type AppOptions = {
+  plugins?: Plugin[]
   setup: () => Record<string, any> | void
-  [key: string]: any
 }
 
-const app: Record<string, any> = {
-  context: {},
-}
+const app: Record<string, any> = {}
 
-export function getAppContext(): AppCustomContext {
-  return readonly(app.context)
+export function useApp(): AppCustomContext {
+  return app
 }
 
 export function createApp(options: AppOptions) {
-  const { setup, ...others } = options
-  Object.assign(app, others)
+  const { setup, plugins = [] } = options
 
-  const lifetimes = wrapLifetimeHooks(APP_LIFETIMES, null, others)
+  registerPlugins(plugins)
+
+  const lifetimes = wrapLifetimeHooks(APP_LIFETIMES, null)
 
   const core = createCore(app).initHooks('App')
-  app[CORE_KEY] = core
+
   setCurrentInstance(app as unknown as Instance)
-  const bindings =
+  core.bindings =
     core.scope.run(() => {
       return setup()
     }) || {}
-
-  core.bindings = bindings
-  app.context = bindings.context || {}
   setCurrentInstance(null)
+
+  Object.assign(app, { [CORE_KEY]: core, ...core.bindings })
 
   return App({
     [CORE_KEY]: core,
-    ...bindings,
+    ...core.bindings,
     ...lifetimes,
   })
 }

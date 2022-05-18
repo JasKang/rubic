@@ -11,9 +11,9 @@ export default defineConfig({
     __TEST__: true,
   },
   test: {
+    environment: 'jsdom',
     include: ['tests/**/*.{test,spec}.{ts,js}'],
     globals: true,
-    environment: 'jsdom',
     watch: false,
     // globalSetup: ['./tests/mock/setup.ts'],
     setupFiles: ['tests/mock/setup.ts'],

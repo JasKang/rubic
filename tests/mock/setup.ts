@@ -18,34 +18,26 @@ function init() {
 
   // @ts-ignore
   global.Component = (options: any) => {
-    const currRender = renderOptions
     const definition = Object.assign(
       {
-        id: currRender.id,
-        path: currRender.path,
-        template: currRender.template || '<div></div>',
-        usingComponents: currRender.usingComponents,
+        id: renderOptions.id,
+        path: renderOptions.path,
+        template: renderOptions.template || '<div></div>',
+        usingComponents: renderOptions.usingComponents,
       },
       options
     )
-    jComponent.register(definition)
-  }
-
-  // @ts-ignore
-  global.Page = (options: any) => {
-    const { behaviors, data, ...others } = options
-    const routeBehavior = Behavior({
-      lifetimes: {
-        created() {
-          this.route = '/pages/test/index'
+    if (options.__IS_PAGE__) {
+      const routeBehavior = Behavior({
+        lifetimes: {
+          created(this: any) {
+            this.route = '/pages/test/index'
+          },
         },
-      },
-    })
-    return Component({
-      behaviors: [routeBehavior, ...behaviors],
-      data,
-      methods: { ...others },
-    })
+      })
+      definition.behaviors = [routeBehavior, ...definition.behaviors]
+    }
+    jComponent.register(definition)
   }
 }
 
