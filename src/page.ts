@@ -1,6 +1,5 @@
 import type { Instance, PageInstance } from './instance'
-import type { ComponentObjectPropsOptions, ComponentPropsOptions, ExtractPropTypes } from './props'
-import type { Flat, AnyObject } from './types'
+import type { AnyObject } from './types'
 import { convertProps } from './props'
 import { wrapLifetimeHooks } from './lifetimes'
 import { setupBehavior } from './setup'

@@ -5,7 +5,6 @@ import {
   CORE_KEY,
   COMPONENT_LIFETIMES,
   COMPONENT_PAGE_LIFETIMES,
-  PAGE_LIFETIMES,
 } from './constants'
 import type { Core, Instance, InstanceType } from './instance'
 import { getCurrentInstance } from './instance'
