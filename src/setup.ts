@@ -58,7 +58,6 @@ type setupBehaviorOptions = {
 }
 
 export const setupBehavior = ({ properties = {}, setup }: setupBehaviorOptions) => {
-  const propNames = Object.keys(properties)
   return Behavior({
     properties,
     lifetimes: {
@@ -68,16 +67,13 @@ export const setupBehavior = ({ properties = {}, setup }: setupBehaviorOptions) 
       attached(this: Instance) {
         const ctx = this
         const core = ctx[CORE_KEY]
-        // @ts-ignore
-        core.initHooks(ctx.route ? 'Page' : 'Component')
 
         ctx.nextTick = core.nextTick
-        setCurrentInstance(ctx)
-        for (const prop of propNames) {
-          core.props[prop] = ctx.data[prop]
-        }
-        const props = readonly(core.props) as Data
+        core.props = ctx.properties
+        core.initHooks(ctx.route ? 'Page' : 'Component')
 
+        setCurrentInstance(ctx)
+        const props = readonly(core.props) as Data
         let bindings: Record<string, any> = {}
         core.scope.run(() => {
           bindings = setup ? setup(props, getContextProxy(ctx)) || {} : {}
@@ -88,7 +84,6 @@ export const setupBehavior = ({ properties = {}, setup }: setupBehaviorOptions) 
           Object.keys(bindings).forEach((key: string) => {
             const value = bindings[key]
             if (isFunction(value)) {
-              // @ts-ignore
               ctx[key] = value
               return
             }

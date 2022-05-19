@@ -13,7 +13,7 @@ registerPlugins([
     },
   },
   {
-    name: '1',
+    name: '2',
     setup(props, ctx, next) {
       middlewareArray.push('b start')
       const nextRet = next ? next() : {}
@@ -22,7 +22,7 @@ registerPlugins([
     },
   },
   {
-    name: '1',
+    name: '3',
     setup(props, ctx) {
       middlewareArray.push('c start')
       middlewareArray.push('c end')
@@ -30,7 +30,7 @@ registerPlugins([
     },
   },
   {
-    name: '1',
+    name: '4',
     setup(props, ctx) {
       middlewareArray.push('d start')
       middlewareArray.push('d end')

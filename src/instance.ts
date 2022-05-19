@@ -49,7 +49,7 @@ export interface AppCustomContext {}
 export interface PageCustomContext {}
 export interface ComponentCustomContext {}
 
-export type InstanceCore = { [CORE_KEY]: Core; nextTick: NextTick }
+export type InstanceCore = { [CORE_KEY]: Core; nextTick: NextTick; route: string }
 
 type BaseInstance<D, C, P extends boolean = false> = Flat<
   WechatMiniprogram.Component.Instance<D, {}, {}, InstanceCore & C, P>
