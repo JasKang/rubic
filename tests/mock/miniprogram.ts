@@ -72,11 +72,11 @@ export async function renderPage(
   root.attach(parent)
   root.instance.onLoad(options.props)
 
-  await sleep(10)
+  // await sleep(0)
   // @ts-ignore
   root.triggerPageLifeTime('show')
-  await sleep(10)
-  root.triggerLifeTime('ready')
+  // await sleep(0)
+  // root.triggerLifeTime('ready')
   return root
 }
 export type MockComponent = RootComponent<

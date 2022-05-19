@@ -61,15 +61,14 @@ export function wrapLifetimeHooks<T extends readonly string[]>(
   return lifeTimes
 }
 
-function getLifetimeHooks(lifetime: AllHook, scope: InstanceType, ins: Instance) {
+function getLifetimeHooks(lifetime: AllHook, scopes: InstanceType[], ins: Instance) {
+  const { type, hooks } = ins[CORE_KEY]
   let key: AllHook = lifetime
-
-  if (scope !== ins[CORE_KEY].type) {
-    return `${ins[CORE_KEY].type} 不存在 ${key} 钩子.`
+  if (scopes.indexOf(type) === -1) {
+    return `${type} 不存在 ${key} 钩子.`
   }
-  const type = ins[CORE_KEY].type
   if (type === 'App') {
-    return isAppLt(key) ? ins[CORE_KEY].hooks[key] : `App 不存在 ${key} 钩子.`
+    return isAppLt(key) ? hooks[key] : `App 不存在 ${key} 钩子.`
   } else {
     const tempKey = firstToLower(key.substring(2)) as AllHook
     if (isComponentLt(tempKey) || isComponentPageLt(tempKey)) {
@@ -77,21 +76,21 @@ function getLifetimeHooks(lifetime: AllHook, scope: InstanceType, ins: Instance)
     }
     if (isComponentLt(key)) {
       // @ts-ignore
-      return ins[CORE_KEY].hooks.lifetimes[key]
+      return hooks.lifetimes[key]
     } else if (isComponentPageLt(key)) {
       // @ts-ignore
-      return ins[CORE_KEY].hooks.pageLifetimes[key]
+      return hooks.pageLifetimes[key]
     } else if (isComponentMethodsLt(key)) {
       // @ts-ignore
-      return ins[CORE_KEY].hooks.methods[key]
+      return hooks.methods[key]
     }
-    return `${type} 不存在 ${key} 钩子.`
+    return `${type} 不存在 ${lifetime} 钩子.`
   }
 }
 
 function createHook<T extends Func>(
   lifetime: AllHook,
-  scope: InstanceType,
+  scopes: InstanceType[],
   options: {
     validator?: (ins: Instance, lifetime: string) => void | string
     // before?: (func: T) => ReturnType<T>
@@ -113,7 +112,7 @@ function createHook<T extends Func>(
       return error(new Error(err))
     }
 
-    const hooksOrError = getLifetimeHooks(lifetime, scope, ins)
+    const hooksOrError = getLifetimeHooks(lifetime, scopes, ins)
     if (Array.isArray(hooksOrError)) {
       hooksOrError.push(hook)
     } else {
@@ -126,47 +125,43 @@ function createHook<T extends Func>(
  * ====== App Lifetime ====
  */
 type IAppLt = Required<WechatMiniprogram.App.Option>
-export const onAppLaunch = createHook<IAppLt['onLaunch']>('onLaunch', 'App')
-export const onAppShow = createHook<IAppLt['onShow']>('onShow', 'App')
-export const onAppHide = createHook<IAppLt['onHide']>('onHide', 'App')
-export const onAppPageNotFound = createHook<IAppLt['onPageNotFound']>('onPageNotFound', 'App')
-export const onAppUnhandledRejection = createHook<IAppLt['onUnhandledRejection']>('onUnhandledRejection', 'App')
-export const onAppThemeChange = createHook<IAppLt['onThemeChange']>('onThemeChange', 'App')
-export const onAppError = createHook<IAppLt['onError']>('onError', 'App')
-
-/**
- * ====== Page Lifetime ====
- */
+export const onAppLaunch = createHook<IAppLt['onLaunch']>('onLaunch', ['App'])
+export const onAppShow = createHook<IAppLt['onShow']>('onShow', ['App'])
+export const onAppHide = createHook<IAppLt['onHide']>('onHide', ['App'])
+export const onAppPageNotFound = createHook<IAppLt['onPageNotFound']>('onPageNotFound', ['App'])
+export const onAppUnhandledRejection = createHook<IAppLt['onUnhandledRejection']>('onUnhandledRejection', ['App'])
+export const onAppThemeChange = createHook<IAppLt['onThemeChange']>('onThemeChange', ['App'])
+export const onAppError = createHook<IAppLt['onError']>('onError', ['App'])
 
 /**
  * ====== Component Lifetime  ====
  */
 type CLt = Required<WechatMiniprogram.Component.Lifetimes['lifetimes']>
 // created、attached 没有
-export const onReady = createHook<CLt['ready']>('onReady', 'Component')
-export const onMoved = createHook<CLt['moved']>('onMoved' as 'moved', 'Component')
-export const onDetached = createHook<CLt['detached']>('onDetached' as 'detached', 'Component')
-export const onError = createHook<CLt['error']>('onError', 'Component')
+export const onReady = createHook<CLt['ready']>('onReady', ['Page', 'Component'])
+export const onMoved = createHook<CLt['moved']>('onMoved' as 'moved', ['Page', 'Component'])
+export const onDetached = createHook<CLt['detached']>('onDetached' as 'detached', ['Page', 'Component'])
+export const onError = createHook<CLt['error']>('onError', ['Page', 'Component'])
 
 /**
  * ====== Component PageLifetime  ====
  */
 type CPageLt = Required<WechatMiniprogram.Component.PageLifetimes>
-export const onShow = createHook<CPageLt['show']>('onShow', 'Component')
-export const onHide = createHook<CPageLt['hide']>('onHide', 'Component')
-export const onResize = createHook<CPageLt['resize']>('onResize' as 'resize', 'Component')
+export const onShow = createHook<CPageLt['show']>('onShow', ['Page', 'Component'])
+export const onHide = createHook<CPageLt['hide']>('onHide', ['Page', 'Component'])
+export const onResize = createHook<CPageLt['resize']>('onResize' as 'resize', ['Page', 'Component'])
 
 /**
  * ====== Component Methods  ====
  */
 type IPageLt = Required<WechatMiniprogram.Page.ILifetime>
-export const onLoad = createHook<IPageLt['onLoad']>('onLoad', 'Page')
-export const onUnload = createHook<IPageLt['onUnload']>('onUnload', 'Page')
-export const onPullDownRefresh = createHook<IPageLt['onPullDownRefresh']>('onPullDownRefresh', 'Page')
-export const onReachBottom = createHook<IPageLt['onReachBottom']>('onReachBottom', 'Page')
-export const onAddToFavorites = createHook<IPageLt['onAddToFavorites']>('onAddToFavorites', 'Page')
-export const onTabItemTap = createHook<IPageLt['onTabItemTap']>('onTabItemTap', 'Page')
-export const onSaveExitState = createHook<() => { data: any; expireTimeStamp: number }>('onSaveExitState', 'Page')
-export const onShareAppMessage = createHook<IPageLt['onShareAppMessage']>('onShareAppMessage', 'Page')
-export const onShareTimeline = createHook<IPageLt['onShareTimeline']>('onShareTimeline', 'Page')
-export const onPageScroll = createHook<IPageLt['onPageScroll']>('onPageScroll', 'Page')
+export const onLoad = createHook<IPageLt['onLoad']>('onLoad', ['Page'])
+export const onUnload = createHook<IPageLt['onUnload']>('onUnload', ['Page'])
+export const onPullDownRefresh = createHook<IPageLt['onPullDownRefresh']>('onPullDownRefresh', ['Page'])
+export const onReachBottom = createHook<IPageLt['onReachBottom']>('onReachBottom', ['Page'])
+export const onAddToFavorites = createHook<IPageLt['onAddToFavorites']>('onAddToFavorites', ['Page'])
+export const onTabItemTap = createHook<IPageLt['onTabItemTap']>('onTabItemTap', ['Page'])
+export const onSaveExitState = createHook<() => { data: any; expireTimeStamp: number }>('onSaveExitState', ['Page'])
+export const onShareAppMessage = createHook<IPageLt['onShareAppMessage']>('onShareAppMessage', ['Page'])
+export const onShareTimeline = createHook<IPageLt['onShareTimeline']>('onShareTimeline', ['Page'])
+export const onPageScroll = createHook<IPageLt['onPageScroll']>('onPageScroll', ['Page'])

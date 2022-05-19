@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
+import { createApp, ref, computed, watchEffect, nextTick, onAppLaunch, onAppShow } from '../src'
 import { launchApp, mockConsole } from './mock'
-import { createApp, ref, computed, watchEffect, nextTick, onLaunch, onAppShow } from '../src'
 
 const launchOptions: WechatMiniprogram.App.LaunchShowOption = {
   path: '/pages/test',
@@ -65,10 +65,10 @@ describe('app', () => {
     const app = await launchApp(() =>
       createApp({
         setup() {
-          onLaunch(options => {
+          onAppLaunch(options => {
             calledKeys.push(`onLaunch0:${options.path}`)
           })
-          onLaunch(options => {
+          onAppLaunch(options => {
             calledKeys.push(`onLaunch1:${options.path}`)
           })
           onAppShow(options => {

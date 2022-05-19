@@ -11,8 +11,8 @@ export type AppOptions = {
 
 const app: Record<string, any> = {}
 
-export function useApp(): AppCustomContext {
-  return app
+export function useApp<T = any>() {
+  return app as AppCustomContext & T
 }
 
 export function createApp(options: AppOptions) {
@@ -24,6 +24,8 @@ export function createApp(options: AppOptions) {
 
   const core = createCore(app).initHooks('App')
 
+  Object.assign(app, { [CORE_KEY]: core, ...lifetimes })
+
   setCurrentInstance(app as unknown as Instance)
   core.bindings =
     core.scope.run(() => {
@@ -31,11 +33,9 @@ export function createApp(options: AppOptions) {
     }) || {}
   setCurrentInstance(null)
 
-  Object.assign(app, { [CORE_KEY]: core, ...core.bindings })
+  Object.assign(app, { ...core.bindings })
 
-  return App({
-    [CORE_KEY]: core,
-    ...core.bindings,
-    ...lifetimes,
-  })
+  App(app)
+
+  return app
 }

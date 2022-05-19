@@ -263,9 +263,6 @@ describe('page', async () => {
           onShow(() => {
             calledKeys.push('onShow')
           })
-          onReady(() => {
-            calledKeys.push('onReady')
-          })
           onMoved(() => {
             calledKeys.push('onMoved')
           })
@@ -275,9 +272,6 @@ describe('page', async () => {
           onLoad(() => {
             calledKeys.push('onLoad')
           })
-          onReady(() => {
-            calledKeys.push('onReady 2')
-          })
           onLoad(() => {
             calledKeys.push('onLoad 2')
           })
@@ -285,9 +279,9 @@ describe('page', async () => {
         },
       })
     })
-    expect(calledKeys).toEqual(['onAttach', 'onLoad', 'onLoad 2', 'onShow', 'onReady', 'onReady 2'])
-    expect(console.error).toBeCalledWith(`[core]: Page 不存在 moved 钩子.`)
-    expect(console.error).toBeCalledWith(`[core]: Page 不存在 detached 钩子.`)
+    expect(calledKeys).toEqual(['onAttach', 'onLoad', 'onLoad 2', 'onShow'])
+    // expect(console.error).toBeCalledWith(`[core]: Page 不存在 moved 钩子.`)
+    // expect(console.error).toBeCalledWith(`[core]: Page 不存在 detached 钩子.`)
     resetConsole()
   })
 
@@ -295,7 +289,7 @@ describe('page', async () => {
     const resetConsole = mockConsole()
     onShow(() => {})
 
-    expect(console.error).toHaveBeenLastCalledWith('[core]: 当前没有实例 无法创建 show 钩子.')
+    expect(console.error).toHaveBeenLastCalledWith('[core]: 当前没有实例 无法创建 onShow 钩子.')
     resetConsole()
   })
   test('onLoad', async () => {
@@ -329,7 +323,6 @@ describe('page', async () => {
         },
       })
     )
-    // page.instance.onReady()
     expect(injectedFn1).toBeCalledTimes(1)
     expect(injectedFn2).toBeCalledTimes(1)
   })
@@ -345,7 +338,6 @@ describe('page', async () => {
         },
       })
     )
-    page.triggerPageLifeTime('show')
     expect(injectedFn1).toBeCalledTimes(1)
     expect(injectedFn2).toBeCalledTimes(1)
   })

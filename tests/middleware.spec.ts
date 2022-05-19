@@ -1,45 +1,47 @@
 import { describe, expect, test } from 'vitest'
-import { loadMiddlewares } from '../src/middleware'
+import { registerPlugins, usePlugin } from '../src/plugin'
 
 const middlewareArray: string[] = []
-
-const middlewares = [
-  // @ts-ignore
-  (props, ctx, next) => {
-    middlewareArray.push('a start')
-    const nextRet = next ? next() : {}
-    middlewareArray.push('a end')
-    return { ...nextRet, a: 'a' }
+registerPlugins([
+  {
+    name: '1',
+    setup(props, ctx, next) {
+      middlewareArray.push('a start')
+      const nextRet = next ? next() : {}
+      middlewareArray.push('a end')
+      return { ...nextRet, a: 'a' }
+    },
   },
-  // @ts-ignore
-  (props, ctx, next) => {
-    middlewareArray.push('b start')
-    const nextRet = next ? next() : {}
-    middlewareArray.push('b end')
-    return { ...nextRet, b: 'b' }
+  {
+    name: '1',
+    setup(props, ctx, next) {
+      middlewareArray.push('b start')
+      const nextRet = next ? next() : {}
+      middlewareArray.push('b end')
+      return { ...nextRet, b: 'b' }
+    },
   },
-  // @ts-ignore
-  (props, ctx) => {
-    middlewareArray.push('c start')
-    middlewareArray.push('c end')
-    return { c: 'c' }
+  {
+    name: '1',
+    setup(props, ctx) {
+      middlewareArray.push('c start')
+      middlewareArray.push('c end')
+      return { c: 'c' }
+    },
   },
-  // @ts-ignore
-  (props, ctx) => {
-    middlewareArray.push('d start')
-    middlewareArray.push('d end')
-    return { d: 'd' }
+  {
+    name: '1',
+    setup(props, ctx) {
+      middlewareArray.push('d start')
+      middlewareArray.push('d end')
+      return { d: 'd' }
+    },
   },
-]
-
-defineConfig({
-  pageMiddlewares: middlewares,
-  componentMiddlewares: middlewares,
-})
+])
 
 describe('middleware', () => {
   test('string keys', () => {
-    const { setup: pageSetup } = loadMiddlewares(
+    const { setup: pageSetup } = usePlugin(
       {
         setup() {
           middlewareArray.push('page')
@@ -63,7 +65,7 @@ describe('middleware', () => {
       'a end',
     ])
 
-    const { setup: componentSetup } = loadMiddlewares(
+    const { setup: componentSetup } = usePlugin(
       {
         setup() {
           middlewareArray.push('Component')

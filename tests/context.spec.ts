@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
-import { createApp, getAppContext, onLaunch } from '../src'
+import { createApp, useApp, onAppLaunch } from '../src'
 import { launchApp, mockConsole, resetConsole } from './mock'
 
 beforeAll(() => {
@@ -28,8 +28,8 @@ describe('context', () => {
             channel: 123123,
             deviceID: 'deviceID_value',
           }
-          onLaunch(opt => {
-            options.scene = opt.scene
+          onAppLaunch(opt => {
+            options.scene = opt.scene + ''
           })
           return {
             context: {
@@ -40,8 +40,9 @@ describe('context', () => {
         },
       })
     )
-    const { options } = getAppContext()
-    expect(options.scene).toBe(1001)
+    const { context } = useApp()
+    const { options } = context
+    expect(options.scene).toBe('1001')
     expect(options.wtag).toBe('')
     expect(app.storage.getItem()).toBe('getItem')
     expect(app.storage.setItem()).toBe('setItem')
