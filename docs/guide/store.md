@@ -2,7 +2,7 @@
 
 状态管理 API 允许您跨组件/页面共享状态。
 
-`Rubic` 中的 Store 使用方法与 `pinia` 保持一致，在 `pinia` 的基础上移除了 options API，仅保留了最基础的哪里。
+`Rubic` 中的 Store 使用方法与 `pinia` 保持一致，在 `pinia` 的基础上移除了 options API，仅保留了最基础的那里。
 
 ## 什么是 Store
 
